@@ -1,8 +1,5 @@
 package com.example.demoback.web.requests;
 
-import lombok.Builder;
-
-@Builder
 public class OutlayRequest {
     private Long id;
     private String outlayName;

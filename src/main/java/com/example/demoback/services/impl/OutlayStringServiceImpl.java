@@ -49,7 +49,7 @@ public class OutlayStringServiceImpl implements OutlayStringsService {
     public OutlayString get(Long stringId) {
         OutlayString outlayString = entityManager.find(OutlayString.class, stringId);
 
-        if (outlayString == null) {
+        if (outlayString == null || outlayString.getIsDeleted()) {
             throw new RuntimeException("String with id: " + stringId + " not found.");
         } else {
             return outlayString;

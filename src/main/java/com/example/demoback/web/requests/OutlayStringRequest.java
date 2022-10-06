@@ -11,7 +11,6 @@ public class OutlayStringRequest {
     private Long equipmentCosts;
     private Long overheads;
     private Long estimatedProfit;
-    private Boolean isDeleted;
 
     public OutlayStringRequest() {
     }
@@ -56,10 +55,6 @@ public class OutlayStringRequest {
         return this.estimatedProfit;
     }
 
-    public Boolean getIsDeleted() {
-        return this.isDeleted;
-    }
-
     public void setStringName(String stringName) {
         this.stringName = stringName;
     }
@@ -100,11 +95,8 @@ public class OutlayStringRequest {
         this.estimatedProfit = estimatedProfit;
     }
 
-    public void setIsDeleted(Boolean isDeleted) {
-        this.isDeleted = isDeleted;
-    }
 
     public String toString() {
-        return "OutlayStringRequest(stringName=" + this.getStringName() + ", salary=" + this.getSalary() + ", mimExploitation=" + this.getMimExploitation() + ", machineOperatorSalary=" + this.getMachineOperatorSalary() + ", materials=" + this.getMaterials() + ", mainCosts=" + this.getMainCosts() + ", supportCosts=" + this.getSupportCosts() + ", equipmentCosts=" + this.getEquipmentCosts() + ", overheads=" + this.getOverheads() + ", estimatedProfit=" + this.getEstimatedProfit() + ", isDeleted=" + this.getIsDeleted() + ")";
+        return "OutlayStringRequest(stringName=" + this.getStringName() + ", salary=" + this.getSalary() + ", mimExploitation=" + this.getMimExploitation() + ", machineOperatorSalary=" + this.getMachineOperatorSalary() + ", materials=" + this.getMaterials() + ", mainCosts=" + this.getMainCosts() + ", supportCosts=" + this.getSupportCosts() + ", equipmentCosts=" + this.getEquipmentCosts() + ", overheads=" + this.getOverheads() + ", estimatedProfit=" + this.getEstimatedProfit() + ", isDeleted=" + ")";
     }
 }
