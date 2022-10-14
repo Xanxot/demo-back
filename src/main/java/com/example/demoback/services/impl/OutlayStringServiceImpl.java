@@ -79,7 +79,7 @@ public class OutlayStringServiceImpl implements OutlayStringsService {
             entityManager.refresh(outlayRow);
 
 
-            changed = updateParents(parent, outlayRow);
+            changed = updateParents(parent, outlayRow, false);
 
             return RecalculatedRows.builder()
                     .currentRov(mapper.toRowResponse(outlayRow))
@@ -88,15 +88,18 @@ public class OutlayStringServiceImpl implements OutlayStringsService {
         }
     }
 
-    public List<RowResponse> updateParents(OutlayRow parent, OutlayRow outlayRow) {
+    public List<RowResponse> updateParents(OutlayRow parent, OutlayRow outlayRow, boolean deleted) {
         List<RowResponse> changed = new ArrayList<>();
-        changed.add(mapper.toRowResponse(recalculateRow(parent, outlayRow)));
+        if (outlayRow != null) {
+            changed.add(mapper.toRowResponse(recalculateRow(parent, outlayRow, deleted)));
+        }
         if (parent.getParent() != null) {
-            OutlayRow row;
+            OutlayRow row = parent;
             do {
-                row = getNextRow(parent);
 
-                changed.add(mapper.toRowResponse(recalculateRow(row, parent)));
+                row = getNextRow(row);
+
+                changed.add(mapper.toRowResponse(recalculateRow(row, parent, deleted)));
             } while (row != null && row.getParent() != null);
 
         }
@@ -104,26 +107,41 @@ public class OutlayStringServiceImpl implements OutlayStringsService {
     }
 
     @Transactional
-    OutlayRow recalculateRow(OutlayRow parent, OutlayRow outlayRow) {
+    OutlayRow recalculateRow(OutlayRow parent, OutlayRow outlayRow, boolean deleted) {
+        if (!deleted) {
+            parent.setSalary(parent.getSalary() + outlayRow.getSalary());
+            parent.setMimExploitation(parent.getMimExploitation() + outlayRow.getMimExploitation());
+            parent.setMachineOperatorSalary(parent.getMachineOperatorSalary() + outlayRow.getMachineOperatorSalary());
+            parent.setMaterials(parent.getMaterials() + outlayRow.getMaterials());
+            parent.setMainCosts(parent.getMainCosts() + outlayRow.getMainCosts());
+            parent.setSupportCosts(parent.getSupportCosts() + outlayRow.getSupportCosts());
+            parent.setEquipmentCosts(parent.getEquipmentCosts() + outlayRow.getEquipmentCosts());
+            parent.setOverheads(parent.getOverheads() + outlayRow.getOverheads());
+            parent.setEstimatedProfit(parent.getEstimatedProfit() + outlayRow.getEstimatedProfit());
+            entityManager.merge(parent);
+            entityManager.flush();
+            entityManager.refresh(parent);
+        } else {
+            parent.setSalary(parent.getSalary() - outlayRow.getSalary());
+            parent.setMimExploitation(parent.getMimExploitation() - outlayRow.getMimExploitation());
+            parent.setMachineOperatorSalary(parent.getMachineOperatorSalary() - outlayRow.getMachineOperatorSalary());
+            parent.setMaterials(parent.getMaterials() - outlayRow.getMaterials());
+            parent.setMainCosts(parent.getMainCosts() - outlayRow.getMainCosts());
+            parent.setSupportCosts(parent.getSupportCosts() - outlayRow.getSupportCosts());
+            parent.setEquipmentCosts(parent.getEquipmentCosts() - outlayRow.getEquipmentCosts());
+            parent.setOverheads(parent.getOverheads() - outlayRow.getOverheads());
+            parent.setEstimatedProfit(parent.getEstimatedProfit() - outlayRow.getEstimatedProfit());
+            entityManager.merge(parent);
+            entityManager.flush();
+            entityManager.refresh(parent);
+        }
 
-        parent.setSalary(parent.getSalary() + outlayRow.getSalary());
-        parent.setMimExploitation(parent.getMimExploitation() + outlayRow.getMimExploitation());
-        parent.setMachineOperatorSalary(parent.getMachineOperatorSalary() + outlayRow.getMachineOperatorSalary());
-        parent.setMaterials(parent.getMaterials() + outlayRow.getMaterials());
-        parent.setMainCosts(parent.getMainCosts() + outlayRow.getMainCosts());
-        parent.setSupportCosts(parent.getSupportCosts() + outlayRow.getSupportCosts());
-        parent.setEquipmentCosts(parent.getEquipmentCosts() + outlayRow.getEquipmentCosts());
-        parent.setOverheads(parent.getOverheads() + outlayRow.getOverheads());
-        parent.setEstimatedProfit(parent.getEstimatedProfit() + outlayRow.getEstimatedProfit());
-        entityManager.merge(parent);
-        entityManager.flush();
-        entityManager.refresh(parent);
 
         return parent;
     }
 
     OutlayRow getNextRow(OutlayRow beforeRow) {
-        return entityManager.createQuery("select r from OutlayRow r where r.id = :id", OutlayRow.class)
+        return entityManager.createQuery("select r from OutlayRow r where r.id = :id and r.isDeleted = false ", OutlayRow.class)
                 .setParameter("id", beforeRow.getParent()).getSingleResult();
     }
 
@@ -141,19 +159,49 @@ public class OutlayStringServiceImpl implements OutlayStringsService {
     @Override
     @Transactional
     public List<TreeResponse> getChild(Long id) {
-//        OutlayRow parent = entityManager.find(OutlayRow.class, id);
-        System.out.println("hola");
         List<TreeResponse> responses = new ArrayList<>();
-        System.out.println("id- " + id);
-        List<OutlayRow> childs = entityManager.createQuery("select r from OutlayRow r where r.parent = :id", OutlayRow.class)
+        List<OutlayRow> childs = entityManager.createQuery("select r from OutlayRow r where r.parent = :id and r.isDeleted = false", OutlayRow.class)
                 .setParameter("id", id).getResultList();
-        System.out.println(childs.size());
         childs.forEach(v ->
                 responses.add(mapper.toTreeResponse(v)));
         return responses;
     }
 
     @Override
+    @Transactional
+    public RecalculatedRows updateRow(Long rowId, OutlayRowRequest request) {
+        OutlayRow row = entityManager.find(OutlayRow.class, rowId);
+        List<RowResponse> changed = new ArrayList<>();
+
+        if (row != null) {
+            row.setRowName(request.getRowName());
+            row.setSalary(request.getSalary());
+            row.setMimExploitation(request.getMimExploitation());
+            row.setMachineOperatorSalary(request.getMachineOperatorSalary());
+            row.setMaterials(request.getMaterials());
+            row.setMainCosts(request.getMainCosts());
+            row.setSupportCosts(request.getSupportCosts());
+            row.setEquipmentCosts(request.getEquipmentCosts());
+            row.setOverheads(request.getOverheads());
+            row.setEstimatedProfit(request.getEstimatedProfit());
+
+
+            entityManager.merge(row);
+            entityManager.flush();
+            entityManager.refresh(row);
+            changed = updateParents(row, null, false);
+            return RecalculatedRows.builder()
+                    .currentRov(mapper.toRowResponse(row))
+                    .changed(changed)
+                    .build();
+        } else {
+            throw new RuntimeException("Row not found");
+        }
+    }
+
+
+    @Override
+    @Transactional
     public OutlayRow get(Long stringId) {
         OutlayRow outlayRow = entityManager.find(OutlayRow.class, stringId);
 
@@ -164,4 +212,64 @@ public class OutlayStringServiceImpl implements OutlayStringsService {
         }
 
     }
+
+    @Override
+    @Transactional
+    public RecalculatedRows deleteRow(Long id) {
+        OutlayRow outlayRow = entityManager.find(OutlayRow.class, id);
+        List<RowResponse> changed = new ArrayList<>();
+        if (outlayRow != null) {
+            List<OutlayRow> rows = entityManager.createQuery("select r from OutlayRow r where r.parent = :id", OutlayRow.class)
+                    .setParameter("id", outlayRow.getId()).getResultList();
+            rows.forEach(v -> {
+                        v.setIsDeleted(true);
+                        entityManager.merge(v);
+                        entityManager.flush();
+                        entityManager.refresh(v);
+                    }
+            );
+            outlayRow.setIsDeleted(true);
+            entityManager.merge(outlayRow);
+            entityManager.flush();
+            entityManager.refresh(outlayRow);
+
+            if (outlayRow.getParent() != null) {
+                OutlayRow parent = entityManager.find(OutlayRow.class, outlayRow.getParent());
+                changed = updateParents(parent, null, true);
+                List<Long> rowDeleteList = List.of(outlayRow.getId());
+                do {
+
+                    rowDeleteList = entityManager.createQuery("select r.id from OutlayRow r where r.parent in (:ids)", Long.class)
+                            .setParameter("ids", rowDeleteList).getResultList();
+                    if (rowDeleteList.size() > 0) {
+                        rowDeleteList = deleteChild(rowDeleteList);
+                    }
+                } while (rowDeleteList.size() > 0);
+                return RecalculatedRows.builder()
+                        .currentRov(mapper.toRowResponse(parent))
+                        .changed(changed)
+                        .build();
+            }
+
+
+        }
+        return RecalculatedRows.builder().build();
+    }
+
+    @Transactional
+    public List<Long> deleteChild(List<Long> outlayRowIds) {
+        List<Long> rows = new ArrayList<>();
+        List<OutlayRow> toDelete = entityManager.createQuery("select r from OutlayRow r where r.id in (:ids)", OutlayRow.class)
+                .setParameter("ids", outlayRowIds).getResultList();
+
+        toDelete.forEach(v -> {
+                    v.setIsDeleted(true);
+                    entityManager.merge(v);
+                    rows.add(v.getId());
+                }
+        );
+        entityManager.flush();
+        return rows;
+    }
+
 }

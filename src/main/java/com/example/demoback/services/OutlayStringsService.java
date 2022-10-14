@@ -14,6 +14,8 @@ public interface OutlayStringsService {
     RecalculatedRows createRowInEntity(Long stringId, OutlayRowRequest request);
     OutlayRow getTreeRows(Long id);
     List<TreeResponse> getChild(Long id);
+    RecalculatedRows updateRow(Long rowId, OutlayRowRequest request);
     OutlayRow get (Long stringId);
+    RecalculatedRows deleteRow(Long id);
 
 }

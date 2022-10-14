@@ -7,7 +7,6 @@ import com.example.demoback.web.requests.OutlayRowRequest;
 import com.example.demoback.web.responses.NewRowResponse;
 import com.example.demoback.web.responses.RecalculatedRows;
 import com.example.demoback.web.responses.TreeResponse;
-import com.example.demoback.web.views.OutlayRowView;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -28,15 +27,15 @@ public class OutlayStringController {
     }
 
     @Operation(description = "Создать сущность(1)")
-    @PostMapping("/create/new-entity")
-    public ResponseEntity<NewRowResponse> createOutlayString()  {
+    @PostMapping("/entity/create")
+    public ResponseEntity<NewRowResponse> createOutlayString() {
 
 
         return ResponseEntity.ok(outlayStringsService.newEntity());
     }
 
     @Operation(description = "Метод создания строки в сущности (3)")
-    @PostMapping("/create/row-in-entity-{id}")
+    @PostMapping("/entity/{id}/row/create")
     public ResponseEntity<RecalculatedRows> createRowInEntity(@RequestBody OutlayRowRequest request, @PathVariable(name = "id") Long id) {
         RecalculatedRows outlayRow = outlayStringsService.createRowInEntity(id, request);
         return ResponseEntity.ok(outlayRow);
@@ -44,11 +43,28 @@ public class OutlayStringController {
 
 
     @Operation(description = "Метод получения списка строк из сущности, возвращает строки в древовидном представлении(2)")
-    @GetMapping("/get-tree-rows-{id}")
+    @GetMapping("/entity/{id}/row/list")
     public ResponseEntity<TreeResponse> getTreeRows(@PathVariable(name = "id") Long id) {
-       OutlayRow row = outlayStringsService.getTreeRows(id);
-       TreeResponse response = webMapper.toTreeResponse(row);
+        OutlayRow row = outlayStringsService.getTreeRows(id);
+        TreeResponse response = webMapper.toTreeResponse(row);
         //  OutlayRowView view = webMapper.(outlayRow);
         return ResponseEntity.ok(response);
     }
+
+    @Operation(description = "Метод редактирования строки в сущности(4)")
+    @PutMapping("/update/row/{id}")
+    public ResponseEntity<RecalculatedRows> updateRow(@PathVariable(name = "id") Long id, @RequestBody OutlayRowRequest request) {
+        RecalculatedRows row = outlayStringsService.updateRow(id, request);
+
+        return ResponseEntity.ok(row);
+    }
+
+    @Operation(description = "Метод удаления строки в сущности(5)")
+    @DeleteMapping("/delete/row/{id}")
+    public ResponseEntity<RecalculatedRows> deleteRow(@PathVariable(name = "id")Long id) {
+        RecalculatedRows row = outlayStringsService.deleteRow(id);
+
+        return ResponseEntity.ok(row);
+    }
+
 }
