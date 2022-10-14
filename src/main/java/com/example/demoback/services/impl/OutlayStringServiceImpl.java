@@ -121,7 +121,6 @@ public class OutlayStringServiceImpl implements OutlayStringsService {
     @Transactional
     OutlayRow recalculateRow(OutlayRow parent, OutlayRow outlayRow, boolean deleted) {
 
-        System.out.println("reccccc1");
         if (!deleted) {
             parent.setSalary(parent.getSalary() + outlayRow.getSalary());
             parent.setMimExploitation(parent.getMimExploitation() + outlayRow.getMimExploitation());
@@ -133,7 +132,6 @@ public class OutlayStringServiceImpl implements OutlayStringsService {
             parent.setOverheads(parent.getOverheads() + outlayRow.getOverheads());
             parent.setEstimatedProfit(parent.getEstimatedProfit() + outlayRow.getEstimatedProfit());
         } else {
-            System.out.println("recalculated");
             parent.setSalary(parent.getSalary() - outlayRow.getSalary());
             parent.setMimExploitation(parent.getMimExploitation() - outlayRow.getMimExploitation());
             parent.setMachineOperatorSalary(parent.getMachineOperatorSalary() - outlayRow.getMachineOperatorSalary());
