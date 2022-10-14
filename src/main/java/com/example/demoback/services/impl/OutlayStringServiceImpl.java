@@ -30,7 +30,7 @@ public class OutlayStringServiceImpl implements OutlayStringsService {
 
     @Override
     @Transactional
-    public NewRowResponse newEntity() {
+    public List<RowResponse> newEntity() {
         OutlayRow outlayRow = OutlayRow.builder()
                 .stringName(UUID.randomUUID().toString())
                 .isDeleted(false)
@@ -47,10 +47,7 @@ public class OutlayStringServiceImpl implements OutlayStringsService {
         entityManager.persist(outlayRow);
         entityManager.flush();
         entityManager.refresh(outlayRow);
-        return NewRowResponse.builder()
-                .id(outlayRow.getId())
-                .stringName(outlayRow.getRowName())
-                .build();
+        return List.of(mapper.toRowResponse(outlayRow));
     }
 
     @Override
@@ -157,13 +154,22 @@ public class OutlayStringServiceImpl implements OutlayStringsService {
 
     @Override
     @Transactional
-    public OutlayRow getTreeRows(Long id) {
-        OutlayRow parent = entityManager.find(OutlayRow.class, id);
-        if (parent == null) {
-            throw new RuntimeException("parent not found");
-        } else {
-            return parent;
+    public List<OutlayRow> getTreeRows(Optional<Long> id) {
+        List<OutlayRow> rows = new ArrayList<>();
+        id.ifPresent(v -> {
+
+            OutlayRow row = entityManager.createQuery("select r from OutlayRow r where r.id = :id and r.isDeleted = false and r.parent is null", OutlayRow.class)
+                    .setParameter("id", v).getSingleResult();
+            if (row != null) {
+                rows.add(row);
+            } else {
+                throw new RuntimeException("Entity not found");
+            }
+        });
+        if (id.isEmpty()) {
+            rows.addAll(entityManager.createQuery("select r from OutlayRow r where r.isDeleted = false and r.parent is null", OutlayRow.class).getResultList());
         }
+        return rows;
     }
 
     @Override
@@ -179,7 +185,7 @@ public class OutlayStringServiceImpl implements OutlayStringsService {
 
     @Override
     @Transactional
-    public RecalculatedRows updateRow(Long rowId, OutlayRowRequest request) {
+    public RecalculatedRows updateRow(Long entityId, Long rowId, OutlayRowRequest request) {
         OutlayRow row = entityManager.find(OutlayRow.class, rowId);
         List<RowResponse> changed = new ArrayList<>();
 
@@ -225,7 +231,7 @@ public class OutlayStringServiceImpl implements OutlayStringsService {
 
     @Override
     @Transactional
-    public RecalculatedRows deleteRow(Long id) {
+    public RecalculatedRows deleteRow(Long eid, Long id) {
         OutlayRow outlayRow = entityManager.find(OutlayRow.class, id);
         List<RowResponse> changed = new ArrayList<>();
         if (outlayRow != null) {
