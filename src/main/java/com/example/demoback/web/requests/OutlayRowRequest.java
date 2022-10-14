@@ -1,7 +1,7 @@
 package com.example.demoback.web.requests;
 
-public class OutlayStringRequest {
-    private String stringName;
+public class OutlayRowRequest {
+    private String rowName;
     private Long salary;
     private Long mimExploitation;
     private Long machineOperatorSalary;
@@ -12,11 +12,11 @@ public class OutlayStringRequest {
     private Long overheads;
     private Long estimatedProfit;
 
-    public OutlayStringRequest() {
+    public OutlayRowRequest() {
     }
 
-    public String getStringName() {
-        return this.stringName;
+    public String getRowName() {
+        return this.rowName;
     }
 
     public Long getSalary() {
@@ -55,8 +55,8 @@ public class OutlayStringRequest {
         return this.estimatedProfit;
     }
 
-    public void setStringName(String stringName) {
-        this.stringName = stringName;
+    public void setRowName(String rowName) {
+        this.rowName = rowName;
     }
 
     public void setSalary(Long salary) {
@@ -97,6 +97,6 @@ public class OutlayStringRequest {
 
 
     public String toString() {
-        return "OutlayStringRequest(stringName=" + this.getStringName() + ", salary=" + this.getSalary() + ", mimExploitation=" + this.getMimExploitation() + ", machineOperatorSalary=" + this.getMachineOperatorSalary() + ", materials=" + this.getMaterials() + ", mainCosts=" + this.getMainCosts() + ", supportCosts=" + this.getSupportCosts() + ", equipmentCosts=" + this.getEquipmentCosts() + ", overheads=" + this.getOverheads() + ", estimatedProfit=" + this.getEstimatedProfit() + ", isDeleted=" + ")";
+        return "OutlayStringRequest(stringName=" + this.getRowName() + ", salary=" + this.getSalary() + ", mimExploitation=" + this.getMimExploitation() + ", machineOperatorSalary=" + this.getMachineOperatorSalary() + ", materials=" + this.getMaterials() + ", mainCosts=" + this.getMainCosts() + ", supportCosts=" + this.getSupportCosts() + ", equipmentCosts=" + this.getEquipmentCosts() + ", overheads=" + this.getOverheads() + ", estimatedProfit=" + this.getEstimatedProfit() + ", isDeleted=" + ")";
     }
 }

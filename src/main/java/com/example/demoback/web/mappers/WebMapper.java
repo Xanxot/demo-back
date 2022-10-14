@@ -1,41 +1,65 @@
 package com.example.demoback.web.mappers;
 
-import com.example.demoback.model.OutlayGroup;
-import com.example.demoback.model.OutlayString;
-import com.example.demoback.web.views.OutlayStringView;
-import com.example.demoback.web.views.OutlayView;
+import com.example.demoback.model.OutlayRow;
+import com.example.demoback.services.OutlayStringsService;
+import com.example.demoback.web.controllers.OutlayStringController;
+import com.example.demoback.web.responses.RecalculatedRows;
+import com.example.demoback.web.responses.RowResponse;
+import com.example.demoback.web.responses.TreeResponse;
+import com.example.demoback.web.views.OutlayRowView;
+import com.sun.source.tree.Tree;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class WebMapper {
 
-    public OutlayView toOutlayView(OutlayGroup outlayGroup) {
-        if (outlayGroup == null) {
-            return null;
-        } else {
-            return OutlayView.builder()
-                    .id(outlayGroup.getId())
-                    .name(outlayGroup.getOutlayName())
-                    .isDeleted(outlayGroup.getIsDeleted())
-                    .build();
-        }
+    @Autowired
+    OutlayStringsService outlayStringsService;
+
+    public OutlayRowView toOutlayStringView(OutlayRow outlayRow) {
+        return OutlayRowView.builder()
+                .id(outlayRow.getId())
+                .stringName(outlayRow.getRowName())
+                .salary(outlayRow.getSalary())
+                .mimExploitation(outlayRow.getMimExploitation())
+                .machineOperatorSalary(outlayRow.getMachineOperatorSalary())
+                .materials(outlayRow.getMaterials())
+                .mainCosts(outlayRow.getMainCosts())
+                .supportCosts(outlayRow.getSupportCosts())
+                .equipmentCosts(outlayRow.getEquipmentCosts())
+                .overheads(outlayRow.getOverheads())
+                .estimatedProfit(outlayRow.getEstimatedProfit())
+                .isDeleted(outlayRow.getIsDeleted())
+                .build();
     }
 
-    public OutlayStringView toOutlayStringView(OutlayString outlayString) {
-        return OutlayStringView.builder()
-                .id(outlayString.getId())
-                .outlayGroupId(outlayString.getOutlayGroupId())
-                .stringName(outlayString.getStringName())
-                .salary(outlayString.getSalary())
-                .mimExploitation(outlayString.getMimExploitation())
-                .machineOperatorSalary(outlayString.getMachineOperatorSalary())
-                .materials(outlayString.getMaterials())
-                .mainCosts(outlayString.getMainCosts())
-                .supportCosts(outlayString.getSupportCosts())
-                .equipmentCosts(outlayString.getEquipmentCosts())
-                .overheads(outlayString.getOverheads())
-                .estimatedProfit(outlayString.getEstimatedProfit())
-                .isDeleted(outlayString.getIsDeleted())
+    public RowResponse toRowResponse(OutlayRow outlayRow){
+        return RowResponse.builder()
+                .id(outlayRow.getId())
+                .rowName(outlayRow.getRowName())
+                .salary(outlayRow.getSalary())
+                .mimExploitation(outlayRow.getMimExploitation())
+                .machineOperatorSalary(outlayRow.getMachineOperatorSalary())
+                .materials(outlayRow.getMaterials())
+                .mainCosts(outlayRow.getMainCosts())
+                .supportCosts(outlayRow.getSupportCosts())
+                .equipmentCosts(outlayRow.getEquipmentCosts())
+                .overheads(outlayRow.getOverheads())
+                .estimatedProfit(outlayRow.getEstimatedProfit())
+                .isDeleted(outlayRow.getIsDeleted())
+                .build();
+    }
+
+    public RecalculatedRows toRecalculatedRows() {
+        return null;
+    }
+
+    public TreeResponse toTreeResponse(OutlayRow row) {
+        System.out.println(row.toString());
+        return TreeResponse.builder()
+                .current(this.toRowResponse(row))
+                .child(outlayStringsService.getChild(row.getId()))
                 .build();
     }
 }

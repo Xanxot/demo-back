@@ -1,21 +1,20 @@
 package com.example.demoback.model;
 
+import com.example.demoback.web.responses.OutlayResponse;
+
 import javax.persistence.*;
 
 @Entity
-@Table(name = "outlay_strings")
-public class OutlayString {
+@Table(name = "outlay_rows")
+public class OutlayRow {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_OUTLAY_STRINGS")
-    @SequenceGenerator(name = "SEQ_OUTLAY_STRINGS", sequenceName = "SEQ_OUTLAY_STRINGS", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_OUTLAY_ROWS")
+    @SequenceGenerator(name = "SEQ_OUTLAY_ROWS", sequenceName = "SEQ_OUTLAY_ROWS", allocationSize = 1)
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "outlay_group_id")
-    private Long outlayGroupId;
-
-    @Column(name = "string_name")
-    private String stringName;
+    @Column(name = "row_name")
+    private String rowName;
 
     @Column(name = "salary")
     private Long salary;
@@ -47,10 +46,12 @@ public class OutlayString {
     @Column(name = "is_deleted")
     private Boolean isDeleted;
 
-    public OutlayString(Long id, Long outlayGroupId, String stringName, Long salary, Long mimExploitation, Long machineOperatorSalary, Long materials, Long mainCosts, Long supportCosts, Long equipmentCosts, Long overheads, Long estimatedProfit, Boolean isDeleted) {
+    @Column(name = "parent")
+    private Long parent;
+
+    public OutlayRow(Long id, String rowName, Long salary, Long mimExploitation, Long machineOperatorSalary, Long materials, Long mainCosts, Long supportCosts, Long equipmentCosts, Long overheads, Long estimatedProfit, Boolean isDeleted, Long parent) {
         this.id = id;
-        this.outlayGroupId = outlayGroupId;
-        this.stringName = stringName;
+        this.rowName = rowName;
         this.salary = salary;
         this.mimExploitation = mimExploitation;
         this.machineOperatorSalary = machineOperatorSalary;
@@ -61,25 +62,23 @@ public class OutlayString {
         this.overheads = overheads;
         this.estimatedProfit = estimatedProfit;
         this.isDeleted = isDeleted;
+        this.parent = parent;
     }
 
-    public OutlayString() {
+    public OutlayRow() {
     }
 
-    public static OutlayStringsBuilder builder() {
-        return new OutlayStringsBuilder();
+
+    public static OutlayRowsBuilder builder() {
+        return new OutlayRowsBuilder();
     }
 
     public Long getId() {
         return this.id;
     }
 
-    public Long getOutlayGroupId() {
-        return this.outlayGroupId;
-    }
-
-    public String getStringName() {
-        return this.stringName;
+    public String getRowName() {
+        return this.rowName;
     }
 
     public Long getSalary() {
@@ -122,16 +121,21 @@ public class OutlayString {
         return this.isDeleted;
     }
 
+    public Long getParent() {
+        return this.parent;
+    }
+
+    public OutlayResponse getChildResponse(){
+        return null;
+    }
+
     public void setId(Long id) {
         this.id = id;
     }
 
-    public void setOutlayGroupId(Long outlayGroupId) {
-        this.outlayGroupId = outlayGroupId;
-    }
 
-    public void setStringName(String stringName) {
-        this.stringName = stringName;
+    public void setRowName(String stringName) {
+        this.rowName = stringName;
     }
 
     public void setSalary(Long salary) {
@@ -174,14 +178,16 @@ public class OutlayString {
         this.isDeleted = isDeleted;
     }
 
-
-    public String toString() {
-        return "OutlayStrings(id=" + this.getId() + ", outlayGroupId=" + this.getOutlayGroupId() + ", stringName=" + this.getStringName() + ", salary=" + this.getSalary() + ", mimExploitation=" + this.getMimExploitation() + ", machineOperatorSalary=" + this.getMachineOperatorSalary() + ", materials=" + this.getMaterials() + ", mainCosts=" + this.getMainCosts() + ", supportCosts=" + this.getSupportCosts() + ", equipmentCosts=" + this.getEquipmentCosts() + ", overheads=" + this.getOverheads() + ", estimatedProfit=" + this.getEstimatedProfit() + ", isDeleted=" + this.getIsDeleted() + ")";
+    public void setParent(Long parent) {
+        this.parent = parent;
     }
 
-    public static class OutlayStringsBuilder {
+    public String toString() {
+        return "OutlayRows(id=" + this.getId() + ", stringName=" + this.getRowName() + ", salary=" + this.getSalary() + ", mimExploitation=" + this.getMimExploitation() + ", machineOperatorSalary=" + this.getMachineOperatorSalary() + ", materials=" + this.getMaterials() + ", mainCosts=" + this.getMainCosts() + ", supportCosts=" + this.getSupportCosts() + ", equipmentCosts=" + this.getEquipmentCosts() + ", overheads=" + this.getOverheads() + ", estimatedProfit=" + this.getEstimatedProfit() + ", parent= " + this.getParent() + ", isDeleted=" + this.getIsDeleted() + ")";
+    }
+
+    public static class OutlayRowsBuilder {
         private Long id;
-        private Long outlayGroupId;
         private String stringName;
         private Long salary;
         private Long mimExploitation;
@@ -193,81 +199,83 @@ public class OutlayString {
         private Long overheads;
         private Long estimatedProfit;
         private Boolean isDeleted;
+        private Long parent;
 
-        OutlayStringsBuilder() {
+        OutlayRowsBuilder() {
         }
 
-        public OutlayStringsBuilder id(Long id) {
+        public OutlayRowsBuilder id(Long id) {
             this.id = id;
             return this;
         }
 
-        public OutlayStringsBuilder outlayGroupId(Long outlayGroupId) {
-            this.outlayGroupId = outlayGroupId;
-            return this;
-        }
-
-        public OutlayStringsBuilder stringName(String stringName) {
+        public OutlayRowsBuilder stringName(String stringName) {
             this.stringName = stringName;
             return this;
         }
 
-        public OutlayStringsBuilder salary(Long salary) {
+        public OutlayRowsBuilder salary(Long salary) {
             this.salary = salary;
             return this;
         }
 
-        public OutlayStringsBuilder mimExploitation(Long mimExploitation) {
+        public OutlayRowsBuilder mimExploitation(Long mimExploitation) {
             this.mimExploitation = mimExploitation;
             return this;
         }
 
-        public OutlayStringsBuilder machineOperatorSalary(Long machineOperatorSalary) {
+        public OutlayRowsBuilder machineOperatorSalary(Long machineOperatorSalary) {
             this.machineOperatorSalary = machineOperatorSalary;
             return this;
         }
 
-        public OutlayStringsBuilder materials(Long materials) {
+        public OutlayRowsBuilder materials(Long materials) {
             this.materials = materials;
             return this;
         }
 
-        public OutlayStringsBuilder mainCosts(Long mainCosts) {
+        public OutlayRowsBuilder mainCosts(Long mainCosts) {
             this.mainCosts = mainCosts;
             return this;
         }
 
-        public OutlayStringsBuilder supportCosts(Long supportCosts) {
+        public OutlayRowsBuilder supportCosts(Long supportCosts) {
             this.supportCosts = supportCosts;
             return this;
         }
 
-        public OutlayStringsBuilder equipmentCosts(Long equipmentCosts) {
+        public OutlayRowsBuilder equipmentCosts(Long equipmentCosts) {
             this.equipmentCosts = equipmentCosts;
             return this;
         }
 
-        public OutlayStringsBuilder overheads(Long overheads) {
+        public OutlayRowsBuilder overheads(Long overheads) {
             this.overheads = overheads;
             return this;
         }
 
-        public OutlayStringsBuilder estimatedProfit(Long estimatedProfit) {
+        public OutlayRowsBuilder estimatedProfit(Long estimatedProfit) {
             this.estimatedProfit = estimatedProfit;
             return this;
         }
 
-        public OutlayStringsBuilder isDeleted(Boolean isDeleted) {
+        public OutlayRowsBuilder isDeleted(Boolean isDeleted) {
             this.isDeleted = isDeleted;
             return this;
         }
 
-        public OutlayString build() {
-            return new OutlayString(id, outlayGroupId, stringName, salary, mimExploitation, machineOperatorSalary, materials, mainCosts, supportCosts, equipmentCosts, overheads, estimatedProfit, isDeleted);
+        public OutlayRowsBuilder parent(Long parent) {
+            this.parent = parent;
+            return this;
+        }
+
+
+        public OutlayRow build() {
+            return new OutlayRow(id, stringName, salary, mimExploitation, machineOperatorSalary, materials, mainCosts, supportCosts, equipmentCosts, overheads, estimatedProfit, isDeleted, parent);
         }
 
         public String toString() {
-            return "OutlayStrings.OutlayStringsBuilder(id=" + this.id + ", outlayGroupId=" + this.outlayGroupId + ", stringName=" + this.stringName + ", salary=" + this.salary + ", mimExploitation=" + this.mimExploitation + ", machineOperatorSalary=" + this.machineOperatorSalary + ", materials=" + this.materials + ", mainCosts=" + this.mainCosts + ", supportCosts=" + this.supportCosts + ", equipmentCosts=" + this.equipmentCosts + ", overheads=" + this.overheads + ", estimatedProfit=" + this.estimatedProfit + ", isDeleted=" + this.isDeleted + ")";
+            return "OutlayRows.OutlayRowsBuilder(id=" + this.id + ", stringName=" + this.stringName + ", salary=" + this.salary + ", mimExploitation=" + this.mimExploitation + ", machineOperatorSalary=" + this.machineOperatorSalary + ", materials=" + this.materials + ", mainCosts=" + this.mainCosts + ", supportCosts=" + this.supportCosts + ", equipmentCosts=" + this.equipmentCosts + ", overheads=" + this.overheads + ", estimatedProfit=" + this.estimatedProfit + ", parent= " + this.parent + ", isDeleted=" + this.isDeleted + ")";
         }
     }
 }

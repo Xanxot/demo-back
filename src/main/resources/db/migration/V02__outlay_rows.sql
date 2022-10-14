@@ -1,8 +1,8 @@
-create table if not exists outlay_strings
+create table if not exists outlay_rows
 (
     id bigint not null primary key,
     outlay_group_id bigint not null,
-    string_name text not null,
+    row_name text not null,
     salary bigint default 0,
     mim_exploitation bigint default 0,
     machine_operator_salary bigint default 0,
@@ -15,4 +15,4 @@ create table if not exists outlay_strings
     is_deleted bool default false,
     foreign key (outlay_group_id) references outlay_group on delete cascade
 );
-create sequence if not exists SEQ_OUTLAY_STRINGS increment 1 start 1;
+create sequence if not exists SEQ_OUTLAY_ROWS increment 1 start 1;

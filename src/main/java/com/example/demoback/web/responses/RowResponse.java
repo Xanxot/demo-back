@@ -1,12 +1,7 @@
 package com.example.demoback.web.responses;
 
-import com.example.demoback.web.views.OutlayRowView;
-
-import java.util.List;
-
-public class OutlayResponse {
+public class RowResponse {
     private Long id;
-    private Long outlayGroupId;
     private String rowName;
     private Long total;
     private Long salary;
@@ -18,12 +13,12 @@ public class OutlayResponse {
     private Long equipmentCosts;
     private Long overheads;
     private Long estimatedProfit;
+    private Long parent;
     private Boolean isDeleted;
-    private List<OutlayRowView> strings;
+    private RowResponse child;
 
-    public OutlayResponse(Long id, Long outlayGroupId, String rowName, Long total, Long salary, Long mimExploitation, Long machineOperatorSalary, Long materials, Long mainCosts, Long supportCosts, Long equipmentCosts, Long overheads, Long estimatedProfit, Boolean isDeleted, List<OutlayRowView> strings) {
+    public RowResponse(Long id, String rowName, Long total, Long salary, Long mimExploitation, Long machineOperatorSalary, Long materials, Long mainCosts, Long supportCosts, Long equipmentCosts, Long overheads, Long estimatedProfit, Long parent, Boolean isDeleted, RowResponse child) {
         this.id = id;
-        this.outlayGroupId = outlayGroupId;
         this.rowName = rowName;
         this.total = total;
         this.salary = salary;
@@ -35,23 +30,20 @@ public class OutlayResponse {
         this.equipmentCosts = equipmentCosts;
         this.overheads = overheads;
         this.estimatedProfit = estimatedProfit;
+        this.parent = parent;
         this.isDeleted = isDeleted;
-        this.strings = strings;
+        this.child = child;
     }
 
-    public OutlayResponse() {
+    public RowResponse() {
     }
 
-    public static OutlayResponseBuilder builder() {
-        return new OutlayResponseBuilder();
+    public static RowResponseBuilder builder() {
+        return new RowResponseBuilder();
     }
 
     public Long getId() {
         return this.id;
-    }
-
-    public Long getOutlayGroupId() {
-        return this.outlayGroupId;
     }
 
     public String getRowName() {
@@ -98,20 +90,20 @@ public class OutlayResponse {
         return this.estimatedProfit;
     }
 
+    public Long getParent() {
+        return this.parent;
+    }
+
     public Boolean getIsDeleted() {
         return this.isDeleted;
     }
 
-    public List<OutlayRowView> getStrings() {
-        return this.strings;
+    public RowResponse getChild() {
+        return this.child;
     }
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public void setOutlayGroupId(Long outlayGroupId) {
-        this.outlayGroupId = outlayGroupId;
     }
 
     public void setRowName(String rowName) {
@@ -158,30 +150,29 @@ public class OutlayResponse {
         this.estimatedProfit = estimatedProfit;
     }
 
+    public void setParent(Long parent) {
+        this.parent = parent;
+    }
+
     public void setIsDeleted(Boolean isDeleted) {
         this.isDeleted = isDeleted;
     }
 
-    public void setStrings(List<OutlayRowView> strings) {
-        this.strings = strings;
+    public void setChild(RowResponse child) {
+        this.child = child;
     }
 
     public boolean equals(final Object o) {
         if (o == this) return true;
-        if (!(o instanceof OutlayResponse)) return false;
-        final OutlayResponse other = (OutlayResponse) o;
+        if (!(o instanceof RowResponse)) return false;
+        final RowResponse other = (RowResponse) o;
         if (!other.canEqual((Object) this)) return false;
         final Object this$id = this.getId();
         final Object other$id = other.getId();
         if (this$id == null ? other$id != null : !this$id.equals(other$id)) return false;
-        final Object this$outlayGroupId = this.getOutlayGroupId();
-        final Object other$outlayGroupId = other.getOutlayGroupId();
-        if (this$outlayGroupId == null ? other$outlayGroupId != null : !this$outlayGroupId.equals(other$outlayGroupId))
-            return false;
-        final Object this$stringName = this.getRowName();
-        final Object other$stringName = other.getRowName();
-        if (this$stringName == null ? other$stringName != null : !this$stringName.equals(other$stringName))
-            return false;
+        final Object this$rowName = this.getRowName();
+        final Object other$rowName = other.getRowName();
+        if (this$rowName == null ? other$rowName != null : !this$rowName.equals(other$rowName)) return false;
         final Object this$total = this.getTotal();
         final Object other$total = other.getTotal();
         if (this$total == null ? other$total != null : !this$total.equals(other$total)) return false;
@@ -217,17 +208,20 @@ public class OutlayResponse {
         final Object other$estimatedProfit = other.getEstimatedProfit();
         if (this$estimatedProfit == null ? other$estimatedProfit != null : !this$estimatedProfit.equals(other$estimatedProfit))
             return false;
+        final Object this$parent = this.getParent();
+        final Object other$parent = other.getParent();
+        if (this$parent == null ? other$parent != null : !this$parent.equals(other$parent)) return false;
         final Object this$isDeleted = this.getIsDeleted();
         final Object other$isDeleted = other.getIsDeleted();
         if (this$isDeleted == null ? other$isDeleted != null : !this$isDeleted.equals(other$isDeleted)) return false;
-        final Object this$strings = this.getStrings();
-        final Object other$strings = other.getStrings();
-        if (this$strings == null ? other$strings != null : !this$strings.equals(other$strings)) return false;
+        final Object this$child = this.getChild();
+        final Object other$child = other.getChild();
+        if (this$child == null ? other$child != null : !this$child.equals(other$child)) return false;
         return true;
     }
 
     protected boolean canEqual(final Object other) {
-        return other instanceof OutlayResponse;
+        return other instanceof RowResponse;
     }
 
     public int hashCode() {
@@ -235,10 +229,8 @@ public class OutlayResponse {
         int result = 1;
         final Object $id = this.getId();
         result = result * PRIME + ($id == null ? 43 : $id.hashCode());
-        final Object $outlayGroupId = this.getOutlayGroupId();
-        result = result * PRIME + ($outlayGroupId == null ? 43 : $outlayGroupId.hashCode());
-        final Object $stringName = this.getRowName();
-        result = result * PRIME + ($stringName == null ? 43 : $stringName.hashCode());
+        final Object $rowName = this.getRowName();
+        result = result * PRIME + ($rowName == null ? 43 : $rowName.hashCode());
         final Object $total = this.getTotal();
         result = result * PRIME + ($total == null ? 43 : $total.hashCode());
         final Object $salary = this.getSalary();
@@ -259,21 +251,22 @@ public class OutlayResponse {
         result = result * PRIME + ($overheads == null ? 43 : $overheads.hashCode());
         final Object $estimatedProfit = this.getEstimatedProfit();
         result = result * PRIME + ($estimatedProfit == null ? 43 : $estimatedProfit.hashCode());
+        final Object $parent = this.getParent();
+        result = result * PRIME + ($parent == null ? 43 : $parent.hashCode());
         final Object $isDeleted = this.getIsDeleted();
         result = result * PRIME + ($isDeleted == null ? 43 : $isDeleted.hashCode());
-        final Object $strings = this.getStrings();
-        result = result * PRIME + ($strings == null ? 43 : $strings.hashCode());
+        final Object $child = this.getChild();
+        result = result * PRIME + ($child == null ? 43 : $child.hashCode());
         return result;
     }
 
     public String toString() {
-        return "OutlayResponse(id=" + this.getId() + ", outlayGroupId=" + this.getOutlayGroupId() + ", stringName=" + this.getRowName() + ", total=" + this.getTotal() + ", salary=" + this.getSalary() + ", mimExploitation=" + this.getMimExploitation() + ", machineOperatorSalary=" + this.getMachineOperatorSalary() + ", materials=" + this.getMaterials() + ", mainCosts=" + this.getMainCosts() + ", supportCosts=" + this.getSupportCosts() + ", equipmentCosts=" + this.getEquipmentCosts() + ", overheads=" + this.getOverheads() + ", estimatedProfit=" + this.getEstimatedProfit() + ", isDeleted=" + this.getIsDeleted() + ", strings=" + this.getStrings() + ")";
+        return "RowResponse(id=" + this.getId() + ", rowName=" + this.getRowName() + ", total=" + this.getTotal() + ", salary=" + this.getSalary() + ", mimExploitation=" + this.getMimExploitation() + ", machineOperatorSalary=" + this.getMachineOperatorSalary() + ", materials=" + this.getMaterials() + ", mainCosts=" + this.getMainCosts() + ", supportCosts=" + this.getSupportCosts() + ", equipmentCosts=" + this.getEquipmentCosts() + ", overheads=" + this.getOverheads() + ", estimatedProfit=" + this.getEstimatedProfit() + ", parent=" + this.getParent() + ", isDeleted=" + this.getIsDeleted() + ", child=" + this.getChild() + ")";
     }
 
-    public static class OutlayResponseBuilder {
+    public static class RowResponseBuilder {
         private Long id;
-        private Long outlayGroupId;
-        private String stringName;
+        private String rowName;
         private Long total;
         private Long salary;
         private Long mimExploitation;
@@ -284,93 +277,94 @@ public class OutlayResponse {
         private Long equipmentCosts;
         private Long overheads;
         private Long estimatedProfit;
+        private Long parent;
         private Boolean isDeleted;
-        private List<OutlayRowView> strings;
+        private RowResponse child;
 
-        OutlayResponseBuilder() {
+        RowResponseBuilder() {
         }
 
-        public OutlayResponseBuilder id(Long id) {
+        public RowResponseBuilder id(Long id) {
             this.id = id;
             return this;
         }
 
-        public OutlayResponseBuilder outlayGroupId(Long outlayGroupId) {
-            this.outlayGroupId = outlayGroupId;
+        public RowResponseBuilder rowName(String rowName) {
+            this.rowName = rowName;
             return this;
         }
 
-        public OutlayResponseBuilder stringName(String stringName) {
-            this.stringName = stringName;
-            return this;
-        }
-
-        public OutlayResponseBuilder total(Long total) {
+        public RowResponseBuilder total(Long total) {
             this.total = total;
             return this;
         }
 
-        public OutlayResponseBuilder salary(Long salary) {
+        public RowResponseBuilder salary(Long salary) {
             this.salary = salary;
             return this;
         }
 
-        public OutlayResponseBuilder mimExploitation(Long mimExploitation) {
+        public RowResponseBuilder mimExploitation(Long mimExploitation) {
             this.mimExploitation = mimExploitation;
             return this;
         }
 
-        public OutlayResponseBuilder machineOperatorSalary(Long machineOperatorSalary) {
+        public RowResponseBuilder machineOperatorSalary(Long machineOperatorSalary) {
             this.machineOperatorSalary = machineOperatorSalary;
             return this;
         }
 
-        public OutlayResponseBuilder materials(Long materials) {
+        public RowResponseBuilder materials(Long materials) {
             this.materials = materials;
             return this;
         }
 
-        public OutlayResponseBuilder mainCosts(Long mainCosts) {
+        public RowResponseBuilder mainCosts(Long mainCosts) {
             this.mainCosts = mainCosts;
             return this;
         }
 
-        public OutlayResponseBuilder supportCosts(Long supportCosts) {
+        public RowResponseBuilder supportCosts(Long supportCosts) {
             this.supportCosts = supportCosts;
             return this;
         }
 
-        public OutlayResponseBuilder equipmentCosts(Long equipmentCosts) {
+        public RowResponseBuilder equipmentCosts(Long equipmentCosts) {
             this.equipmentCosts = equipmentCosts;
             return this;
         }
 
-        public OutlayResponseBuilder overheads(Long overheads) {
+        public RowResponseBuilder overheads(Long overheads) {
             this.overheads = overheads;
             return this;
         }
 
-        public OutlayResponseBuilder estimatedProfit(Long estimatedProfit) {
+        public RowResponseBuilder estimatedProfit(Long estimatedProfit) {
             this.estimatedProfit = estimatedProfit;
             return this;
         }
 
-        public OutlayResponseBuilder isDeleted(Boolean isDeleted) {
+        public RowResponseBuilder parent(Long parent) {
+            this.parent = parent;
+            return this;
+        }
+
+        public RowResponseBuilder isDeleted(Boolean isDeleted) {
             this.isDeleted = isDeleted;
             return this;
         }
 
-        public OutlayResponseBuilder strings(List<OutlayRowView> strings) {
-            this.strings = strings;
+        public RowResponseBuilder child(RowResponse child) {
+            this.child = child;
             return this;
         }
 
-        public OutlayResponse build() {
-            return new OutlayResponse(id, outlayGroupId, stringName, total, salary, mimExploitation, machineOperatorSalary, materials, mainCosts, supportCosts, equipmentCosts, overheads, estimatedProfit, isDeleted, strings);
+        public RowResponse build() {
+            return new RowResponse(id, rowName, total, salary, mimExploitation, machineOperatorSalary, materials, mainCosts, supportCosts, equipmentCosts, overheads, estimatedProfit, parent, isDeleted, child);
         }
 
         public String toString() {
-            return "OutlayResponse.OutlayResponseBuilder(id=" + this.id + ", outlayGroupId=" + this.outlayGroupId + ", stringName=" + this.stringName + ", total=" + this.total + ", salary=" + this.salary + ", mimExploitation=" + this.mimExploitation + ", machineOperatorSalary=" + this.machineOperatorSalary + ", materials=" + this.materials + ", mainCosts=" + this.mainCosts + ", supportCosts=" + this.supportCosts + ", equipmentCosts=" + this.equipmentCosts + ", overheads=" + this.overheads + ", estimatedProfit=" + this.estimatedProfit + ", isDeleted=" + this.isDeleted + ", strings=" + this.strings + ")";
+            return "RowResponse.RowResponseBuilder(id=" + this.id + ", rowName=" + this.rowName + ", total=" + this.total + ", salary=" + this.salary + ", mimExploitation=" + this.mimExploitation + ", machineOperatorSalary=" + this.machineOperatorSalary + ", materials=" + this.materials + ", mainCosts=" + this.mainCosts + ", supportCosts=" + this.supportCosts + ", equipmentCosts=" + this.equipmentCosts + ", overheads=" + this.overheads + ", estimatedProfit=" + this.estimatedProfit + ", parent=" + this.parent + ", isDeleted=" + this.isDeleted + ", child=" + this.child + ")";
         }
     }
 }

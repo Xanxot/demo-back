@@ -1,10 +1,10 @@
 package com.example.demoback.web.views;
 
-public class OutlayStringView {
+public class OutlayRowView {
     private Long id;
     private Long outlayGroupId;
     private Long total;
-    private String stringName;
+    private String rowName;
     private Long salary;
     private Long mimExploitation;
     private Long machineOperatorSalary;
@@ -16,11 +16,11 @@ public class OutlayStringView {
     private Long estimatedProfit;
     private Boolean isDeleted;
 
-    public OutlayStringView(Long id, Long outlayGroupId, Long total, String stringName, Long salary, Long mimExploitation, Long machineOperatorSalary, Long materials, Long mainCosts, Long supportCosts, Long equipmentCosts, Long overheads, Long estimatedProfit, Boolean isDeleted) {
+    public OutlayRowView(Long id, Long outlayGroupId, Long total, String rowName, Long salary, Long mimExploitation, Long machineOperatorSalary, Long materials, Long mainCosts, Long supportCosts, Long equipmentCosts, Long overheads, Long estimatedProfit, Boolean isDeleted) {
         this.id = id;
         this.outlayGroupId = outlayGroupId;
         this.total = total;
-        this.stringName = stringName;
+        this.rowName = rowName;
         this.salary = salary;
         this.mimExploitation = mimExploitation;
         this.machineOperatorSalary = machineOperatorSalary;
@@ -33,7 +33,7 @@ public class OutlayStringView {
         this.isDeleted = isDeleted;
     }
 
-    public OutlayStringView() {
+    public OutlayRowView() {
     }
 
     public static OutlayStringViewBuilder builder() {
@@ -52,8 +52,8 @@ public class OutlayStringView {
         return this.total;
     }
 
-    public String getStringName() {
-        return this.stringName;
+    public String getRowName() {
+        return this.rowName;
     }
 
     public Long getSalary() {
@@ -108,8 +108,8 @@ public class OutlayStringView {
         this.total = total;
     }
 
-    public void setStringName(String stringName) {
-        this.stringName = stringName;
+    public void setRowName(String rowName) {
+        this.rowName = rowName;
     }
 
     public void setSalary(Long salary) {
@@ -154,8 +154,8 @@ public class OutlayStringView {
 
     public boolean equals(final Object o) {
         if (o == this) return true;
-        if (!(o instanceof OutlayStringView)) return false;
-        final OutlayStringView other = (OutlayStringView) o;
+        if (!(o instanceof OutlayRowView)) return false;
+        final OutlayRowView other = (OutlayRowView) o;
         if (!other.canEqual((Object) this)) return false;
         final Object this$id = this.getId();
         final Object other$id = other.getId();
@@ -167,8 +167,8 @@ public class OutlayStringView {
         final Object this$total = this.getTotal();
         final Object other$total = other.getTotal();
         if (this$total == null ? other$total != null : !this$total.equals(other$total)) return false;
-        final Object this$stringName = this.getStringName();
-        final Object other$stringName = other.getStringName();
+        final Object this$stringName = this.getRowName();
+        final Object other$stringName = other.getRowName();
         if (this$stringName == null ? other$stringName != null : !this$stringName.equals(other$stringName))
             return false;
         final Object this$salary = this.getSalary();
@@ -210,7 +210,7 @@ public class OutlayStringView {
     }
 
     protected boolean canEqual(final Object other) {
-        return other instanceof OutlayStringView;
+        return other instanceof OutlayRowView;
     }
 
     public int hashCode() {
@@ -222,7 +222,7 @@ public class OutlayStringView {
         result = result * PRIME + ($outlayGroupId == null ? 43 : $outlayGroupId.hashCode());
         final Object $total = this.getTotal();
         result = result * PRIME + ($total == null ? 43 : $total.hashCode());
-        final Object $stringName = this.getStringName();
+        final Object $stringName = this.getRowName();
         result = result * PRIME + ($stringName == null ? 43 : $stringName.hashCode());
         final Object $salary = this.getSalary();
         result = result * PRIME + ($salary == null ? 43 : $salary.hashCode());
@@ -248,7 +248,7 @@ public class OutlayStringView {
     }
 
     public String toString() {
-        return "OutlayStringView(id=" + this.getId() + ", outlayGroupId=" + this.getOutlayGroupId() + ", total=" + this.getTotal() + ", stringName=" + this.getStringName() + ", salary=" + this.getSalary() + ", mimExploitation=" + this.getMimExploitation() + ", machineOperatorSalary=" + this.getMachineOperatorSalary() + ", materials=" + this.getMaterials() + ", mainCosts=" + this.getMainCosts() + ", supportCosts=" + this.getSupportCosts() + ", equipmentCosts=" + this.getEquipmentCosts() + ", overheads=" + this.getOverheads() + ", estimatedProfit=" + this.getEstimatedProfit() + ", isDeleted=" + this.getIsDeleted() + ")";
+        return "OutlayStringView(id=" + this.getId() + ", outlayGroupId=" + this.getOutlayGroupId() + ", total=" + this.getTotal() + ", stringName=" + this.getRowName() + ", salary=" + this.getSalary() + ", mimExploitation=" + this.getMimExploitation() + ", machineOperatorSalary=" + this.getMachineOperatorSalary() + ", materials=" + this.getMaterials() + ", mainCosts=" + this.getMainCosts() + ", supportCosts=" + this.getSupportCosts() + ", equipmentCosts=" + this.getEquipmentCosts() + ", overheads=" + this.getOverheads() + ", estimatedProfit=" + this.getEstimatedProfit() + ", isDeleted=" + this.getIsDeleted() + ")";
     }
 
     public static class OutlayStringViewBuilder {
@@ -340,12 +340,12 @@ public class OutlayStringView {
             return this;
         }
 
-        public OutlayStringView build() {
-            return new OutlayStringView(id, outlayGroupId, total, stringName, salary, mimExploitation, machineOperatorSalary, materials, mainCosts, supportCosts, equipmentCosts, overheads, estimatedProfit, isDeleted);
+        public OutlayRowView build() {
+            return new OutlayRowView(id, outlayGroupId, total, stringName, salary, mimExploitation, machineOperatorSalary, materials, mainCosts, supportCosts, equipmentCosts, overheads, estimatedProfit, isDeleted);
         }
 
         public String toString() {
-            return "OutlayStringView.OutlayStringViewBuilder(id=" + this.id + ", outlayGroupId=" + this.outlayGroupId + ", total=" + this.total + ", stringName=" + this.stringName + ", salary=" + this.salary + ", mimExploitation=" + this.mimExploitation + ", machineOperatorSalary=" + this.machineOperatorSalary + ", materials=" + this.materials + ", mainCosts=" + this.mainCosts + ", supportCosts=" + this.supportCosts + ", equipmentCosts=" + this.equipmentCosts + ", overheads=" + this.overheads + ", estimatedProfit=" + this.estimatedProfit + ", isDeleted=" + this.isDeleted + ")";
+            return "OutlayRowView.OutlayRowViewBuilder(id=" + this.id + ", outlayGroupId=" + this.outlayGroupId + ", total=" + this.total + ", stringName=" + this.stringName + ", salary=" + this.salary + ", mimExploitation=" + this.mimExploitation + ", machineOperatorSalary=" + this.machineOperatorSalary + ", materials=" + this.materials + ", mainCosts=" + this.mainCosts + ", supportCosts=" + this.supportCosts + ", equipmentCosts=" + this.equipmentCosts + ", overheads=" + this.overheads + ", estimatedProfit=" + this.estimatedProfit + ", isDeleted=" + this.isDeleted + ")";
         }
     }
 }
