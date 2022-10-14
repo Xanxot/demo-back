@@ -7,11 +7,12 @@ import com.example.demoback.web.responses.RecalculatedRows;
 import com.example.demoback.web.responses.TreeResponse;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface OutlayStringsService {
 
     NewRowResponse newEntity();
-    RecalculatedRows createRowInEntity(Long stringId, OutlayRowRequest request);
+    RecalculatedRows createRowInEntity(Optional<Long> stringId, OutlayRowRequest request);
     OutlayRow getTreeRows(Long id);
     List<TreeResponse> getChild(Long id);
     RecalculatedRows updateRow(Long rowId, OutlayRowRequest request);

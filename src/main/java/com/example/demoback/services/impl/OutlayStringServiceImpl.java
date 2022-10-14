@@ -16,6 +16,7 @@ import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -54,38 +55,49 @@ public class OutlayStringServiceImpl implements OutlayStringsService {
 
     @Override
     @Transactional
-    public RecalculatedRows createRowInEntity(Long parentId, OutlayRowRequest request) {
-        OutlayRow parent = entityManager.find(OutlayRow.class, parentId);
+    public RecalculatedRows createRowInEntity(Optional<Long> parentId, OutlayRowRequest request) {
+        // OutlayRow parent = entityManager.find(OutlayRow.class, parentId);
+
+
+        OutlayRow outlayRow = OutlayRow.builder()
+                .stringName(request.getRowName())
+                .salary(request.getSalary())
+                .mimExploitation(request.getMimExploitation())
+                .machineOperatorSalary(request.getMachineOperatorSalary())
+                .materials(request.getMaterials())
+                .mainCosts(request.getMainCosts())
+                .supportCosts(request.getSupportCosts())
+                .equipmentCosts(request.getEquipmentCosts())
+                .overheads(request.getOverheads())
+                .estimatedProfit(request.getEstimatedProfit())
+                .isDeleted(false)
+                .build();
+
         List<RowResponse> changed = new ArrayList<>();
-        if (parent == null) {
-            throw new RuntimeException("parent not found");
-        } else {
-            OutlayRow outlayRow = OutlayRow.builder()
-                    .stringName(request.getRowName())
-                    .salary(request.getSalary())
-                    .mimExploitation(request.getMimExploitation())
-                    .machineOperatorSalary(request.getMachineOperatorSalary())
-                    .materials(request.getMaterials())
-                    .mainCosts(request.getMainCosts())
-                    .supportCosts(request.getSupportCosts())
-                    .equipmentCosts(request.getEquipmentCosts())
-                    .overheads(request.getOverheads())
-                    .estimatedProfit(request.getEstimatedProfit())
-                    .isDeleted(false)
-                    .parent(parent.getId())
-                    .build();
-            entityManager.persist(outlayRow);
-            entityManager.flush();
-            entityManager.refresh(outlayRow);
+        parentId.ifPresent(v -> {
+                    OutlayRow parent = entityManager.find(OutlayRow.class, v);
+                    if (parent == null) {
+                        throw new RuntimeException("parent not found.");
+                    } else {
+
+                        outlayRow.setParent(parent.getId());
+                        changed.addAll(updateParents(parent, outlayRow, false));
 
 
-            changed = updateParents(parent, outlayRow, false);
+                    }
 
-            return RecalculatedRows.builder()
-                    .currentRov(mapper.toRowResponse(outlayRow))
-                    .changed(changed)
-                    .build();
-        }
+                }
+        );
+        entityManager.persist(outlayRow);
+        entityManager.flush();
+        entityManager.refresh(outlayRow);
+
+
+        return RecalculatedRows.builder()
+                .currentRov(mapper.toRowResponse(outlayRow))
+                .changed(changed)
+                .build();
+
     }
 
     public List<RowResponse> updateParents(OutlayRow parent, OutlayRow outlayRow, boolean deleted) {
@@ -108,6 +120,8 @@ public class OutlayStringServiceImpl implements OutlayStringsService {
 
     @Transactional
     OutlayRow recalculateRow(OutlayRow parent, OutlayRow outlayRow, boolean deleted) {
+
+        System.out.println("reccccc1");
         if (!deleted) {
             parent.setSalary(parent.getSalary() + outlayRow.getSalary());
             parent.setMimExploitation(parent.getMimExploitation() + outlayRow.getMimExploitation());
@@ -118,10 +132,8 @@ public class OutlayStringServiceImpl implements OutlayStringsService {
             parent.setEquipmentCosts(parent.getEquipmentCosts() + outlayRow.getEquipmentCosts());
             parent.setOverheads(parent.getOverheads() + outlayRow.getOverheads());
             parent.setEstimatedProfit(parent.getEstimatedProfit() + outlayRow.getEstimatedProfit());
-            entityManager.merge(parent);
-            entityManager.flush();
-            entityManager.refresh(parent);
         } else {
+            System.out.println("recalculated");
             parent.setSalary(parent.getSalary() - outlayRow.getSalary());
             parent.setMimExploitation(parent.getMimExploitation() - outlayRow.getMimExploitation());
             parent.setMachineOperatorSalary(parent.getMachineOperatorSalary() - outlayRow.getMachineOperatorSalary());
@@ -131,10 +143,10 @@ public class OutlayStringServiceImpl implements OutlayStringsService {
             parent.setEquipmentCosts(parent.getEquipmentCosts() - outlayRow.getEquipmentCosts());
             parent.setOverheads(parent.getOverheads() - outlayRow.getOverheads());
             parent.setEstimatedProfit(parent.getEstimatedProfit() - outlayRow.getEstimatedProfit());
-            entityManager.merge(parent);
-            entityManager.flush();
-            entityManager.refresh(parent);
         }
+        entityManager.merge(parent);
+        entityManager.flush();
+        entityManager.refresh(parent);
 
 
         return parent;

@@ -8,9 +8,13 @@ import com.example.demoback.web.responses.NewRowResponse;
 import com.example.demoback.web.responses.RecalculatedRows;
 import com.example.demoback.web.responses.TreeResponse;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Required;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/v1/outlay-strings")
@@ -35,9 +39,10 @@ public class OutlayStringController {
     }
 
     @Operation(description = "Метод создания строки в сущности (3)")
-    @PostMapping("/entity/{id}/row/create")
-    public ResponseEntity<RecalculatedRows> createRowInEntity(@RequestBody OutlayRowRequest request, @PathVariable(name = "id") Long id) {
-        RecalculatedRows outlayRow = outlayStringsService.createRowInEntity(id, request);
+    @PostMapping(value = "/entity/row/create")
+    public ResponseEntity<RecalculatedRows> createRowInEntity(@RequestBody OutlayRowRequest request,
+                                                              @RequestParam(required = false) Long id) {
+        RecalculatedRows outlayRow = outlayStringsService.createRowInEntity(Optional.ofNullable(id), request);
         return ResponseEntity.ok(outlayRow);
     }
 
@@ -47,7 +52,6 @@ public class OutlayStringController {
     public ResponseEntity<TreeResponse> getTreeRows(@PathVariable(name = "id") Long id) {
         OutlayRow row = outlayStringsService.getTreeRows(id);
         TreeResponse response = webMapper.toTreeResponse(row);
-        //  OutlayRowView view = webMapper.(outlayRow);
         return ResponseEntity.ok(response);
     }
 

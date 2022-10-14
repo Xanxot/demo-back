@@ -17,23 +17,6 @@ public class WebMapper {
     @Autowired
     OutlayStringsService outlayStringsService;
 
-    public OutlayRowView toOutlayStringView(OutlayRow outlayRow) {
-        return OutlayRowView.builder()
-                .id(outlayRow.getId())
-                .stringName(outlayRow.getRowName())
-                .salary(outlayRow.getSalary())
-                .mimExploitation(outlayRow.getMimExploitation())
-                .machineOperatorSalary(outlayRow.getMachineOperatorSalary())
-                .materials(outlayRow.getMaterials())
-                .mainCosts(outlayRow.getMainCosts())
-                .supportCosts(outlayRow.getSupportCosts())
-                .equipmentCosts(outlayRow.getEquipmentCosts())
-                .overheads(outlayRow.getOverheads())
-                .estimatedProfit(outlayRow.getEstimatedProfit())
-                .isDeleted(outlayRow.getIsDeleted())
-                .build();
-    }
-
     public RowResponse toRowResponse(OutlayRow outlayRow){
         return RowResponse.builder()
                 .id(outlayRow.getId())
@@ -58,7 +41,16 @@ public class WebMapper {
     public TreeResponse toTreeResponse(OutlayRow row) {
         System.out.println(row.toString());
         return TreeResponse.builder()
-                .current(this.toRowResponse(row))
+                .id(row.getId())
+                .rowName(row.getRowName())
+                .salary(row.getSalary())
+                .mimExploitation(row.getMimExploitation())
+                .machineOperatorSalary(row.getMachineOperatorSalary())
+                .materials(row.getMaterials())
+                .mainCosts(row.getMainCosts())
+                .supportCosts(row.getSupportCosts())
+                .overheads(row.getOverheads())
+                .estimatedProfit(row.getEstimatedProfit())
                 .child(outlayStringsService.getChild(row.getId()))
                 .build();
     }
