@@ -2,14 +2,13 @@ package com.example.demoback.web.mappers;
 
 import com.example.demoback.model.OutlayRow;
 import com.example.demoback.services.OutlayStringsService;
-import com.example.demoback.web.controllers.OutlayStringController;
 import com.example.demoback.web.responses.RecalculatedRows;
 import com.example.demoback.web.responses.RowResponse;
 import com.example.demoback.web.responses.TreeResponse;
-import com.example.demoback.web.views.OutlayRowView;
-import com.sun.source.tree.Tree;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Component
 public class WebMapper {
@@ -40,18 +39,21 @@ public class WebMapper {
 
     public TreeResponse toTreeResponse(OutlayRow row) {
         System.out.println(row.toString());
+        List<TreeResponse> childs = outlayStringsService.getChild(row.getId());
         return TreeResponse.builder()
                 .id(row.getId())
                 .rowName(row.getRowName())
+                .total(childs.size())
                 .salary(row.getSalary())
                 .mimExploitation(row.getMimExploitation())
                 .machineOperatorSalary(row.getMachineOperatorSalary())
                 .materials(row.getMaterials())
                 .mainCosts(row.getMainCosts())
                 .supportCosts(row.getSupportCosts())
+                .equipmentCosts(row.getEquipmentCosts())
                 .overheads(row.getOverheads())
                 .estimatedProfit(row.getEstimatedProfit())
-                .child(outlayStringsService.getChild(row.getId()))
+                .child(childs)
                 .build();
     }
 }

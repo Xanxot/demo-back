@@ -5,7 +5,7 @@ import java.util.List;
 public class TreeResponse {
     private Long id;
     private String rowName;
-    private Long total;
+    private int total;
     private Long salary;
     private Long mimExploitation;
     private Long machineOperatorSalary;
@@ -18,7 +18,7 @@ public class TreeResponse {
     private List<TreeResponse> child;
 
 
-    public TreeResponse(Long id, String rowName, Long total, Long salary, Long mimExploitation, Long machineOperatorSalary, Long materials, Long mainCosts, Long supportCosts, Long equipmentCosts, Long overheads, Long estimatedProfit, List<TreeResponse> child) {
+    public TreeResponse(Long id, String rowName, int total, Long salary, Long mimExploitation, Long machineOperatorSalary, Long materials, Long mainCosts, Long supportCosts, Long equipmentCosts, Long overheads, Long estimatedProfit, List<TreeResponse> child) {
         this.id = id;
         this.rowName = rowName;
         this.total = total;
@@ -49,7 +49,7 @@ public class TreeResponse {
         return this.rowName;
     }
 
-    public Long getTotal() {
+    public int getTotal() {
         return this.total;
     }
 
@@ -101,7 +101,7 @@ public class TreeResponse {
         this.rowName = rowName;
     }
 
-    public void setTotal(Long total) {
+    public void setTotal(int total) {
         this.total = total;
     }
 
@@ -240,7 +240,7 @@ public class TreeResponse {
     public static class TreeResponseBuilder {
         private Long id;
         private String rowName;
-        private Long total;
+        private int total;
         private Long salary;
         private Long mimExploitation;
         private Long machineOperatorSalary;
@@ -265,7 +265,7 @@ public class TreeResponse {
             return this;
         }
 
-        public TreeResponseBuilder total(Long total) {
+        public TreeResponseBuilder total(int total) {
             this.total = total;
             return this;
         }

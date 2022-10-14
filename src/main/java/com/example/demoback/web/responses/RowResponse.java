@@ -3,7 +3,7 @@ package com.example.demoback.web.responses;
 public class RowResponse {
     private Long id;
     private String rowName;
-    private Long total;
+    private int total;
     private Long salary;
     private Long mimExploitation;
     private Long machineOperatorSalary;
@@ -17,7 +17,7 @@ public class RowResponse {
     private Boolean isDeleted;
     private RowResponse child;
 
-    public RowResponse(Long id, String rowName, Long total, Long salary, Long mimExploitation, Long machineOperatorSalary, Long materials, Long mainCosts, Long supportCosts, Long equipmentCosts, Long overheads, Long estimatedProfit, Long parent, Boolean isDeleted, RowResponse child) {
+    public RowResponse(Long id, String rowName, int total, Long salary, Long mimExploitation, Long machineOperatorSalary, Long materials, Long mainCosts, Long supportCosts, Long equipmentCosts, Long overheads, Long estimatedProfit, Long parent, Boolean isDeleted, RowResponse child) {
         this.id = id;
         this.rowName = rowName;
         this.total = total;
@@ -50,7 +50,7 @@ public class RowResponse {
         return this.rowName;
     }
 
-    public Long getTotal() {
+    public int getTotal() {
         return this.total;
     }
 
@@ -110,7 +110,7 @@ public class RowResponse {
         this.rowName = rowName;
     }
 
-    public void setTotal(Long total) {
+    public void setTotal(int total) {
         this.total = total;
     }
 
@@ -267,7 +267,7 @@ public class RowResponse {
     public static class RowResponseBuilder {
         private Long id;
         private String rowName;
-        private Long total;
+        private int total;
         private Long salary;
         private Long mimExploitation;
         private Long machineOperatorSalary;
@@ -294,7 +294,7 @@ public class RowResponse {
             return this;
         }
 
-        public RowResponseBuilder total(Long total) {
+        public RowResponseBuilder total(int total) {
             this.total = total;
             return this;
         }

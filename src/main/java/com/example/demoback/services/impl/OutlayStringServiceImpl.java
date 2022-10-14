@@ -4,7 +4,6 @@ import com.example.demoback.model.OutlayRow;
 import com.example.demoback.services.OutlayStringsService;
 import com.example.demoback.web.mappers.WebMapper;
 import com.example.demoback.web.requests.OutlayRowRequest;
-import com.example.demoback.web.responses.NewRowResponse;
 import com.example.demoback.web.responses.RecalculatedRows;
 import com.example.demoback.web.responses.RowResponse;
 import com.example.demoback.web.responses.TreeResponse;
@@ -251,7 +250,7 @@ public class OutlayStringServiceImpl implements OutlayStringsService {
 
             if (outlayRow.getParent() != null) {
                 OutlayRow parent = entityManager.find(OutlayRow.class, outlayRow.getParent());
-                changed = updateParents(parent, null, true);
+                changed = updateParents(parent, outlayRow, true);
                 List<Long> rowDeleteList = List.of(outlayRow.getId());
                 do {
 

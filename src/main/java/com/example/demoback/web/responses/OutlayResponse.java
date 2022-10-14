@@ -8,7 +8,7 @@ public class OutlayResponse {
     private Long id;
     private Long outlayGroupId;
     private String rowName;
-    private Long total;
+    private int total;
     private Long salary;
     private Long mimExploitation;
     private Long machineOperatorSalary;
@@ -21,7 +21,7 @@ public class OutlayResponse {
     private Boolean isDeleted;
     private List<OutlayRowView> strings;
 
-    public OutlayResponse(Long id, Long outlayGroupId, String rowName, Long total, Long salary, Long mimExploitation, Long machineOperatorSalary, Long materials, Long mainCosts, Long supportCosts, Long equipmentCosts, Long overheads, Long estimatedProfit, Boolean isDeleted, List<OutlayRowView> strings) {
+    public OutlayResponse(Long id, Long outlayGroupId, String rowName, int total, Long salary, Long mimExploitation, Long machineOperatorSalary, Long materials, Long mainCosts, Long supportCosts, Long equipmentCosts, Long overheads, Long estimatedProfit, Boolean isDeleted, List<OutlayRowView> strings) {
         this.id = id;
         this.outlayGroupId = outlayGroupId;
         this.rowName = rowName;
@@ -58,7 +58,7 @@ public class OutlayResponse {
         return this.rowName;
     }
 
-    public Long getTotal() {
+    public int getTotal() {
         return this.total;
     }
 
@@ -118,7 +118,7 @@ public class OutlayResponse {
         this.rowName = rowName;
     }
 
-    public void setTotal(Long total) {
+    public void setTotal(int total) {
         this.total = total;
     }
 
@@ -274,7 +274,7 @@ public class OutlayResponse {
         private Long id;
         private Long outlayGroupId;
         private String stringName;
-        private Long total;
+        private int total;
         private Long salary;
         private Long mimExploitation;
         private Long machineOperatorSalary;
@@ -305,7 +305,7 @@ public class OutlayResponse {
             return this;
         }
 
-        public OutlayResponseBuilder total(Long total) {
+        public OutlayResponseBuilder total(int total) {
             this.total = total;
             return this;
         }
