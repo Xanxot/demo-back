@@ -29,7 +29,6 @@ public class WebMapper {
                 .equipmentCosts(outlayRow.getEquipmentCosts())
                 .overheads(outlayRow.getOverheads())
                 .estimatedProfit(outlayRow.getEstimatedProfit())
-                .isDeleted(outlayRow.getIsDeleted())
                 .build();
     }
 
@@ -38,7 +37,6 @@ public class WebMapper {
     }
 
     public TreeResponse toTreeResponse(OutlayRow row) {
-        System.out.println(row.toString());
         List<TreeResponse> childs = outlayStringsService.getChild(row.getId());
         return TreeResponse.builder()
                 .id(row.getId())

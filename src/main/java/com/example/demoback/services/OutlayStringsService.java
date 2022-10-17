@@ -2,19 +2,17 @@ package com.example.demoback.services;
 
 import com.example.demoback.model.OutlayRow;
 import com.example.demoback.web.requests.OutlayRowRequest;
-import com.example.demoback.web.responses.NewRowResponse;
 import com.example.demoback.web.responses.RecalculatedRows;
 import com.example.demoback.web.responses.RowResponse;
 import com.example.demoback.web.responses.TreeResponse;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface OutlayStringsService {
 
     List<RowResponse> newEntity();
-    RecalculatedRows createRowInEntity(Optional<Long> stringId, OutlayRowRequest request);
-    List<OutlayRow> getTreeRows(Optional<Long> id);
+    RecalculatedRows createRowInEntity(Long entityId, OutlayRowRequest request);
+    List<OutlayRow> getTreeRows(Long entityId);
     List<TreeResponse> getChild(Long id);
     RecalculatedRows updateRow(Long entityId, Long rowId, OutlayRowRequest request);
     OutlayRow get (Long stringId);

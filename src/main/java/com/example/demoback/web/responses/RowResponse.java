@@ -13,11 +13,8 @@ public class RowResponse {
     private Long equipmentCosts;
     private Long overheads;
     private Long estimatedProfit;
-    private Long parent;
-    private Boolean isDeleted;
-    private RowResponse child;
 
-    public RowResponse(Long id, String rowName, int total, Long salary, Long mimExploitation, Long machineOperatorSalary, Long materials, Long mainCosts, Long supportCosts, Long equipmentCosts, Long overheads, Long estimatedProfit, Long parent, Boolean isDeleted, RowResponse child) {
+    public RowResponse(Long id, String rowName, int total, Long salary, Long mimExploitation, Long machineOperatorSalary, Long materials, Long mainCosts, Long supportCosts, Long equipmentCosts, Long overheads, Long estimatedProfit) {
         this.id = id;
         this.rowName = rowName;
         this.total = total;
@@ -30,9 +27,6 @@ public class RowResponse {
         this.equipmentCosts = equipmentCosts;
         this.overheads = overheads;
         this.estimatedProfit = estimatedProfit;
-        this.parent = parent;
-        this.isDeleted = isDeleted;
-        this.child = child;
     }
 
     public RowResponse() {
@@ -90,18 +84,6 @@ public class RowResponse {
         return this.estimatedProfit;
     }
 
-    public Long getParent() {
-        return this.parent;
-    }
-
-    public Boolean getIsDeleted() {
-        return this.isDeleted;
-    }
-
-    public RowResponse getChild() {
-        return this.child;
-    }
-
     public void setId(Long id) {
         this.id = id;
     }
@@ -150,18 +132,6 @@ public class RowResponse {
         this.estimatedProfit = estimatedProfit;
     }
 
-    public void setParent(Long parent) {
-        this.parent = parent;
-    }
-
-    public void setIsDeleted(Boolean isDeleted) {
-        this.isDeleted = isDeleted;
-    }
-
-    public void setChild(RowResponse child) {
-        this.child = child;
-    }
-
     public boolean equals(final Object o) {
         if (o == this) return true;
         if (!(o instanceof RowResponse)) return false;
@@ -173,9 +143,7 @@ public class RowResponse {
         final Object this$rowName = this.getRowName();
         final Object other$rowName = other.getRowName();
         if (this$rowName == null ? other$rowName != null : !this$rowName.equals(other$rowName)) return false;
-        final Object this$total = this.getTotal();
-        final Object other$total = other.getTotal();
-        if (this$total == null ? other$total != null : !this$total.equals(other$total)) return false;
+        if (this.getTotal() != other.getTotal()) return false;
         final Object this$salary = this.getSalary();
         final Object other$salary = other.getSalary();
         if (this$salary == null ? other$salary != null : !this$salary.equals(other$salary)) return false;
@@ -208,15 +176,6 @@ public class RowResponse {
         final Object other$estimatedProfit = other.getEstimatedProfit();
         if (this$estimatedProfit == null ? other$estimatedProfit != null : !this$estimatedProfit.equals(other$estimatedProfit))
             return false;
-        final Object this$parent = this.getParent();
-        final Object other$parent = other.getParent();
-        if (this$parent == null ? other$parent != null : !this$parent.equals(other$parent)) return false;
-        final Object this$isDeleted = this.getIsDeleted();
-        final Object other$isDeleted = other.getIsDeleted();
-        if (this$isDeleted == null ? other$isDeleted != null : !this$isDeleted.equals(other$isDeleted)) return false;
-        final Object this$child = this.getChild();
-        final Object other$child = other.getChild();
-        if (this$child == null ? other$child != null : !this$child.equals(other$child)) return false;
         return true;
     }
 
@@ -231,8 +190,7 @@ public class RowResponse {
         result = result * PRIME + ($id == null ? 43 : $id.hashCode());
         final Object $rowName = this.getRowName();
         result = result * PRIME + ($rowName == null ? 43 : $rowName.hashCode());
-        final Object $total = this.getTotal();
-        result = result * PRIME + ($total == null ? 43 : $total.hashCode());
+        result = result * PRIME + this.getTotal();
         final Object $salary = this.getSalary();
         result = result * PRIME + ($salary == null ? 43 : $salary.hashCode());
         final Object $mimExploitation = this.getMimExploitation();
@@ -251,17 +209,11 @@ public class RowResponse {
         result = result * PRIME + ($overheads == null ? 43 : $overheads.hashCode());
         final Object $estimatedProfit = this.getEstimatedProfit();
         result = result * PRIME + ($estimatedProfit == null ? 43 : $estimatedProfit.hashCode());
-        final Object $parent = this.getParent();
-        result = result * PRIME + ($parent == null ? 43 : $parent.hashCode());
-        final Object $isDeleted = this.getIsDeleted();
-        result = result * PRIME + ($isDeleted == null ? 43 : $isDeleted.hashCode());
-        final Object $child = this.getChild();
-        result = result * PRIME + ($child == null ? 43 : $child.hashCode());
         return result;
     }
 
     public String toString() {
-        return "RowResponse(id=" + this.getId() + ", rowName=" + this.getRowName() + ", total=" + this.getTotal() + ", salary=" + this.getSalary() + ", mimExploitation=" + this.getMimExploitation() + ", machineOperatorSalary=" + this.getMachineOperatorSalary() + ", materials=" + this.getMaterials() + ", mainCosts=" + this.getMainCosts() + ", supportCosts=" + this.getSupportCosts() + ", equipmentCosts=" + this.getEquipmentCosts() + ", overheads=" + this.getOverheads() + ", estimatedProfit=" + this.getEstimatedProfit() + ", parent=" + this.getParent() + ", isDeleted=" + this.getIsDeleted() + ", child=" + this.getChild() + ")";
+        return "RowResponse(id=" + this.getId() + ", rowName=" + this.getRowName() + ", total=" + this.getTotal() + ", salary=" + this.getSalary() + ", mimExploitation=" + this.getMimExploitation() + ", machineOperatorSalary=" + this.getMachineOperatorSalary() + ", materials=" + this.getMaterials() + ", mainCosts=" + this.getMainCosts() + ", supportCosts=" + this.getSupportCosts() + ", equipmentCosts=" + this.getEquipmentCosts() + ", overheads=" + this.getOverheads() + ", estimatedProfit=" + this.getEstimatedProfit() + ")";
     }
 
     public static class RowResponseBuilder {
@@ -277,9 +229,6 @@ public class RowResponse {
         private Long equipmentCosts;
         private Long overheads;
         private Long estimatedProfit;
-        private Long parent;
-        private Boolean isDeleted;
-        private RowResponse child;
 
         RowResponseBuilder() {
         }
@@ -344,27 +293,12 @@ public class RowResponse {
             return this;
         }
 
-        public RowResponseBuilder parent(Long parent) {
-            this.parent = parent;
-            return this;
-        }
-
-        public RowResponseBuilder isDeleted(Boolean isDeleted) {
-            this.isDeleted = isDeleted;
-            return this;
-        }
-
-        public RowResponseBuilder child(RowResponse child) {
-            this.child = child;
-            return this;
-        }
-
         public RowResponse build() {
-            return new RowResponse(id, rowName, total, salary, mimExploitation, machineOperatorSalary, materials, mainCosts, supportCosts, equipmentCosts, overheads, estimatedProfit, parent, isDeleted, child);
+            return new RowResponse(id, rowName, total, salary, mimExploitation, machineOperatorSalary, materials, mainCosts, supportCosts, equipmentCosts, overheads, estimatedProfit);
         }
 
         public String toString() {
-            return "RowResponse.RowResponseBuilder(id=" + this.id + ", rowName=" + this.rowName + ", total=" + this.total + ", salary=" + this.salary + ", mimExploitation=" + this.mimExploitation + ", machineOperatorSalary=" + this.machineOperatorSalary + ", materials=" + this.materials + ", mainCosts=" + this.mainCosts + ", supportCosts=" + this.supportCosts + ", equipmentCosts=" + this.equipmentCosts + ", overheads=" + this.overheads + ", estimatedProfit=" + this.estimatedProfit + ", parent=" + this.parent + ", isDeleted=" + this.isDeleted + ", child=" + this.child + ")";
+            return "RowResponse.RowResponseBuilder(id=" + this.id + ", rowName=" + this.rowName + ", total=" + this.total + ", salary=" + this.salary + ", mimExploitation=" + this.mimExploitation + ", machineOperatorSalary=" + this.machineOperatorSalary + ", materials=" + this.materials + ", mainCosts=" + this.mainCosts + ", supportCosts=" + this.supportCosts + ", equipmentCosts=" + this.equipmentCosts + ", overheads=" + this.overheads + ", estimatedProfit=" + this.estimatedProfit + ")";
         }
     }
 }

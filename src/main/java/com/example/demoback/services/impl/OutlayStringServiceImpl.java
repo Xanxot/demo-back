@@ -51,9 +51,12 @@ public class OutlayStringServiceImpl implements OutlayStringsService {
 
     @Override
     @Transactional
-    public RecalculatedRows createRowInEntity(Optional<Long> parentId, OutlayRowRequest request) {
-        // OutlayRow parent = entityManager.find(OutlayRow.class, parentId);
+    public RecalculatedRows createRowInEntity(Long entityId, OutlayRowRequest request) {
+        OutlayRow parent = entityManager.find(OutlayRow.class, entityId);
 
+        if (parent == null) {
+            throw new RuntimeException("parent not found.");
+        }
 
         OutlayRow outlayRow = OutlayRow.builder()
                 .stringName(request.getRowName())
@@ -67,23 +70,11 @@ public class OutlayStringServiceImpl implements OutlayStringsService {
                 .overheads(request.getOverheads())
                 .estimatedProfit(request.getEstimatedProfit())
                 .isDeleted(false)
+                .parent(parent.getId())
                 .build();
 
-        List<RowResponse> changed = new ArrayList<>();
-        parentId.ifPresent(v -> {
-                    OutlayRow parent = entityManager.find(OutlayRow.class, v);
-                    if (parent == null) {
-                        throw new RuntimeException("parent not found.");
-                    } else {
+        List<RowResponse> changed = new ArrayList<>(updateParents(parent, outlayRow, false));
 
-                        outlayRow.setParent(parent.getId());
-                        changed.addAll(updateParents(parent, outlayRow, false));
-
-
-                    }
-
-                }
-        );
         entityManager.persist(outlayRow);
         entityManager.flush();
         entityManager.refresh(outlayRow);
@@ -111,6 +102,7 @@ public class OutlayStringServiceImpl implements OutlayStringsService {
             } while (row != null && row.getParent() != null);
 
         }
+
         return changed;
     }
 
@@ -153,21 +145,30 @@ public class OutlayStringServiceImpl implements OutlayStringsService {
 
     @Override
     @Transactional
-    public List<OutlayRow> getTreeRows(Optional<Long> id) {
+    public List<OutlayRow> getTreeRows(Long eId) {
         List<OutlayRow> rows = new ArrayList<>();
-        id.ifPresent(v -> {
 
-            OutlayRow row = entityManager.createQuery("select r from OutlayRow r where r.id = :id and r.isDeleted = false and r.parent is null", OutlayRow.class)
-                    .setParameter("id", v).getSingleResult();
-            if (row != null) {
-                rows.add(row);
-            } else {
-                throw new RuntimeException("Entity not found");
-            }
-        });
-        if (id.isEmpty()) {
-            rows.addAll(entityManager.createQuery("select r from OutlayRow r where r.isDeleted = false and r.parent is null", OutlayRow.class).getResultList());
+        OutlayRow row = entityManager.createQuery("select r from OutlayRow r where r.id = :id and r.isDeleted = false", OutlayRow.class)
+                .setParameter("id", eId).getSingleResult();
+        if (row != null) {
+            rows.add(row);
+        } else {
+            throw new RuntimeException("Entity not found");
         }
+
+        // eId.ifPresent(v -> {
+        //
+        //            OutlayRow row = entityManager.createQuery("select r from OutlayRow r where r.id = :id and r.isDeleted = false", OutlayRow.class)
+        //                    .setParameter("id", v).getSingleResult();
+        //            if (row != null) {
+        //                rows.add(row);
+        //            } else {
+        //                throw new RuntimeException("Entity not found");
+        //            }
+        //        });
+        //        if (eId.isEmpty()) {
+        //            rows.addAll(entityManager.createQuery("select r from OutlayRow r where r.isDeleted = false and r.parent is null", OutlayRow.class).getResultList());
+        //        }
         return rows;
     }
 
@@ -184,34 +185,37 @@ public class OutlayStringServiceImpl implements OutlayStringsService {
 
     @Override
     @Transactional
-    public RecalculatedRows updateRow(Long entityId, Long rowId, OutlayRowRequest request) {
-        OutlayRow row = entityManager.find(OutlayRow.class, rowId);
+    public RecalculatedRows updateRow(Long eId, Long rowId, OutlayRowRequest request) {
+
+        OutlayRow row = entityManager.createQuery("select r from OutlayRow r where r.id = :id and r.isDeleted = false and r.parent = :eId", OutlayRow.class)
+                .setParameter("id", rowId)
+                .setParameter("eId", eId).getSingleResult();
+        if (row == null) {
+            throw new RuntimeException("row not found.");
+        }
+
         List<RowResponse> changed = new ArrayList<>();
 
-        if (row != null) {
-            row.setRowName(request.getRowName());
-            row.setSalary(request.getSalary());
-            row.setMimExploitation(request.getMimExploitation());
-            row.setMachineOperatorSalary(request.getMachineOperatorSalary());
-            row.setMaterials(request.getMaterials());
-            row.setMainCosts(request.getMainCosts());
-            row.setSupportCosts(request.getSupportCosts());
-            row.setEquipmentCosts(request.getEquipmentCosts());
-            row.setOverheads(request.getOverheads());
-            row.setEstimatedProfit(request.getEstimatedProfit());
+        row.setRowName(request.getRowName());
+        row.setSalary(request.getSalary());
+        row.setMimExploitation(request.getMimExploitation());
+        row.setMachineOperatorSalary(request.getMachineOperatorSalary());
+        row.setMaterials(request.getMaterials());
+        row.setMainCosts(request.getMainCosts());
+        row.setSupportCosts(request.getSupportCosts());
+        row.setEquipmentCosts(request.getEquipmentCosts());
+        row.setOverheads(request.getOverheads());
+        row.setEstimatedProfit(request.getEstimatedProfit());
 
 
-            entityManager.merge(row);
-            entityManager.flush();
-            entityManager.refresh(row);
-            changed = updateParents(row, null, false);
-            return RecalculatedRows.builder()
-                    .currentRov(mapper.toRowResponse(row))
-                    .changed(changed)
-                    .build();
-        } else {
-            throw new RuntimeException("Row not found");
-        }
+        entityManager.merge(row);
+        entityManager.flush();
+        entityManager.refresh(row);
+        changed = updateParents(row, null, false);
+        return RecalculatedRows.builder()
+                .currentRov(mapper.toRowResponse(row))
+                .changed(changed)
+                .build();
     }
 
 
@@ -231,7 +235,13 @@ public class OutlayStringServiceImpl implements OutlayStringsService {
     @Override
     @Transactional
     public RecalculatedRows deleteRow(Long eid, Long id) {
-        OutlayRow outlayRow = entityManager.find(OutlayRow.class, id);
+        //  OutlayRow outlayRow = entityManager.find(OutlayRow.class, id);
+        OutlayRow outlayRow = entityManager.createQuery("select r from OutlayRow r where r.id = :id and r.isDeleted = false and r.parent = :eId", OutlayRow.class)
+                .setParameter("id", id)
+                .setParameter("eId", eid).getSingleResult();
+        if (outlayRow == null) {
+            throw new RuntimeException("row not found.");
+        }
         List<RowResponse> changed = new ArrayList<>();
         if (outlayRow != null) {
             List<OutlayRow> rows = entityManager.createQuery("select r from OutlayRow r where r.parent = :id", OutlayRow.class)
@@ -261,7 +271,7 @@ public class OutlayStringServiceImpl implements OutlayStringsService {
                     }
                 } while (rowDeleteList.size() > 0);
                 return RecalculatedRows.builder()
-                        .currentRov(mapper.toRowResponse(parent))
+                        .currentRov(null)
                         .changed(changed)
                         .build();
             }

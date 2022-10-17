@@ -5,6 +5,7 @@ import com.example.demoback.services.OutlayStringsService;
 import com.example.demoback.web.mappers.WebMapper;
 import com.example.demoback.web.requests.OutlayRowRequest;
 import com.example.demoback.web.responses.RecalculatedRows;
+import com.example.demoback.web.responses.RowResponse;
 import com.example.demoback.web.responses.TreeResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,25 +33,22 @@ public class OutlayStringController {
 
     @Operation(description = "Создать сущность(1)")
     @PostMapping("/entity/create")
-    public ResponseEntity<HttpStatus> createOutlayString() {
-
-        outlayStringsService.newEntity();
-        return ResponseEntity.ok(HttpStatus.OK);
+    public ResponseEntity<List<RowResponse>> createOutlayString() {
+        return ResponseEntity.ok(outlayStringsService.newEntity());
     }
 
     @Operation(description = "Метод создания строки в сущности (3)")
-    @PostMapping(value = "/entity/row/create")
-    public ResponseEntity<RecalculatedRows> createRowInEntity(@RequestBody OutlayRowRequest request,
-                                                              @RequestParam(required = false) Long id) {
-        RecalculatedRows outlayRow = outlayStringsService.createRowInEntity(Optional.ofNullable(id), request);
+    @PostMapping(value = "/entity/{eID}/row/create")
+    public ResponseEntity<RecalculatedRows> createRowInEntity(@RequestBody OutlayRowRequest request, @PathVariable Long eID) {
+        RecalculatedRows outlayRow = outlayStringsService.createRowInEntity(eID, request);
         return ResponseEntity.ok(outlayRow);
     }
 
 
     @Operation(description = "Метод получения списка строк из сущности, возвращает строки в древовидном представлении(2)")
-    @GetMapping("/entity/row/list")
-    public ResponseEntity<List<TreeResponse>> getTreeRows(@RequestParam(required = false) Long id) {
-        List<OutlayRow> row = outlayStringsService.getTreeRows(Optional.ofNullable(id));
+    @GetMapping("/entity/{eID}/row/list")
+    public ResponseEntity<List<TreeResponse>> getTreeRows(@PathVariable Long eID) {
+        List<OutlayRow> row = outlayStringsService.getTreeRows(eID);
         List<TreeResponse> responses = new ArrayList<>();
         row.forEach(v -> responses.add(webMapper.toTreeResponse(v)));
         return ResponseEntity.ok(responses);
