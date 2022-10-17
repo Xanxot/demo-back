@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.ResponseStatus;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
@@ -95,7 +96,13 @@ public class OutlayStringServiceImpl implements OutlayStringsService {
     public List<RowResponse> updateParents(OutlayRow parent, OutlayRow outlayRow, boolean deleted) {
         List<RowResponse> changed = new ArrayList<>();
         if (outlayRow != null) {
-            changed.add(mapper.toRowResponse(recalculateRow(parent, outlayRow, deleted)));
+            RowResponse before = mapper.toRowResponse(parent);
+            RowResponse after = mapper.toRowResponse(recalculateRow(parent, outlayRow, deleted));
+
+            if (!before.equals(after)) {
+                changed.add(after);
+            }
+            //  changed.add(mapper.toRowResponse(recalculateRow(parent, outlayRow, deleted)));
         }
         if (parent.getParent() != null) {
             OutlayRow row = parent;
@@ -103,7 +110,12 @@ public class OutlayStringServiceImpl implements OutlayStringsService {
 
                 row = getNextRow(row);
 
-                changed.add(mapper.toRowResponse(recalculateRow(row, parent, deleted)));
+                RowResponse before = mapper.toRowResponse(row);
+                RowResponse after = mapper.toRowResponse(recalculateRow(row, parent, deleted));
+                if (!before.equals(after)) {
+                    changed.add(after);
+                }
+                // changed.add(mapper.toRowResponse(recalculateRow(row, parent, deleted)));
             } while (row != null && row.getParent() != null);
 
         }
