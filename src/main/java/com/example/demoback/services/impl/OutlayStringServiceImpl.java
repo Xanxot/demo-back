@@ -210,6 +210,7 @@ public class OutlayStringServiceImpl implements OutlayStringsService {
         if (row == null) {
             return null;
         }
+        RowResponse before = mapper.toRowResponse(row);
 
         List<RowResponse> changed = new ArrayList<>();
 
@@ -228,7 +229,10 @@ public class OutlayStringServiceImpl implements OutlayStringsService {
         entityManager.merge(row);
         entityManager.flush();
         entityManager.refresh(row);
-        changed = updateParents(row, null, false);
+        RowResponse after = mapper.toRowResponse(row);
+        if (!before.equals(after)) {
+            changed = updateParents(row, null, false);
+        }
         return RecalculatedRows.builder()
                 .currentRov(mapper.toRowResponse(row))
                 .changed(changed)
