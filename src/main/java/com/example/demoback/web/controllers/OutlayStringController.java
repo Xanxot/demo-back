@@ -1,21 +1,19 @@
 package com.example.demoback.web.controllers;
 
+import com.example.demoback.errors.ResourceNotFoundException;
 import com.example.demoback.model.OutlayRow;
 import com.example.demoback.services.OutlayStringsService;
 import com.example.demoback.web.mappers.WebMapper;
 import com.example.demoback.web.requests.OutlayRowRequest;
+import com.example.demoback.web.responses.NewRowResponse;
 import com.example.demoback.web.responses.RecalculatedRows;
-import com.example.demoback.web.responses.RowResponse;
 import com.example.demoback.web.responses.TreeResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/v1/outlay-rows")
@@ -33,7 +31,7 @@ public class OutlayStringController {
 
     @Operation(description = "Создать сущность(1)")
     @PostMapping("/entity/create")
-    public ResponseEntity<List<RowResponse>> createOutlayString() {
+    public ResponseEntity<NewRowResponse> createOutlayString() {
         return ResponseEntity.ok(outlayStringsService.newEntity());
     }
 
@@ -41,6 +39,11 @@ public class OutlayStringController {
     @PostMapping(value = "/entity/{eID}/row/create")
     public ResponseEntity<RecalculatedRows> createRowInEntity(@RequestBody OutlayRowRequest request, @PathVariable Long eID) {
         RecalculatedRows outlayRow = outlayStringsService.createRowInEntity(eID, request);
+
+        if (outlayRow == null){
+            throw new ResourceNotFoundException();
+        }
+
         return ResponseEntity.ok(outlayRow);
     }
 
@@ -49,6 +52,9 @@ public class OutlayStringController {
     @GetMapping("/entity/{eID}/row/list")
     public ResponseEntity<List<TreeResponse>> getTreeRows(@PathVariable Long eID) {
         List<OutlayRow> row = outlayStringsService.getTreeRows(eID);
+        if (row == null){
+            throw new ResourceNotFoundException();
+        }
         List<TreeResponse> responses = new ArrayList<>();
         row.forEach(v -> responses.add(webMapper.toTreeResponse(v)));
         return ResponseEntity.ok(responses);
@@ -58,7 +64,9 @@ public class OutlayStringController {
     @PutMapping("/entity/{eID}/row/{rID}/update")
     public ResponseEntity<RecalculatedRows> updateRow(@RequestBody OutlayRowRequest request, @PathVariable Long eID, @PathVariable Long rID) {
         RecalculatedRows row = outlayStringsService.updateRow(eID, rID, request);
-
+        if (row == null){
+            throw new ResourceNotFoundException();
+        }
         return ResponseEntity.ok(row);
     }
 
@@ -66,7 +74,9 @@ public class OutlayStringController {
     @DeleteMapping("/entity/{eID}/row/{rID}/delete")
     public ResponseEntity<RecalculatedRows> deleteRow(@PathVariable(name = "eID") Long eID, @PathVariable(name = "rID") Long rID) {
         RecalculatedRows row = outlayStringsService.deleteRow(eID, rID);
-
+        if (row == null){
+            throw new ResourceNotFoundException();
+        }
         return ResponseEntity.ok(row);
     }
 

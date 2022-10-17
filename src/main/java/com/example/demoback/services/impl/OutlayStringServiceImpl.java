@@ -4,21 +4,23 @@ import com.example.demoback.model.OutlayRow;
 import com.example.demoback.services.OutlayStringsService;
 import com.example.demoback.web.mappers.WebMapper;
 import com.example.demoback.web.requests.OutlayRowRequest;
+import com.example.demoback.web.responses.NewRowResponse;
 import com.example.demoback.web.responses.RecalculatedRows;
 import com.example.demoback.web.responses.RowResponse;
 import com.example.demoback.web.responses.TreeResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-
+import org.springframework.web.bind.annotation.ResponseStatus;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
+@ResponseStatus(value = HttpStatus.NOT_FOUND)
 public class OutlayStringServiceImpl implements OutlayStringsService {
 
     @PersistenceContext
@@ -29,7 +31,7 @@ public class OutlayStringServiceImpl implements OutlayStringsService {
 
     @Override
     @Transactional
-    public List<RowResponse> newEntity() {
+    public NewRowResponse newEntity() {
         OutlayRow outlayRow = OutlayRow.builder()
                 .stringName(UUID.randomUUID().toString())
                 .isDeleted(false)
@@ -46,16 +48,19 @@ public class OutlayStringServiceImpl implements OutlayStringsService {
         entityManager.persist(outlayRow);
         entityManager.flush();
         entityManager.refresh(outlayRow);
-        return List.of(mapper.toRowResponse(outlayRow));
+        return NewRowResponse.builder()
+                .id(outlayRow.getId())
+                .stringName(outlayRow.getRowName())
+                .build();
     }
 
     @Override
     @Transactional
     public RecalculatedRows createRowInEntity(Long entityId, OutlayRowRequest request) {
-        OutlayRow parent = entityManager.find(OutlayRow.class, entityId);
-
+        OutlayRow parent = entityManager.createQuery("select r from OutlayRow r where r.id = :id and r.isDeleted = false", OutlayRow.class)
+                .setParameter("id", entityId).getSingleResult();
         if (parent == null) {
-            throw new RuntimeException("parent not found.");
+            return null;
         }
 
         OutlayRow outlayRow = OutlayRow.builder()
@@ -153,7 +158,7 @@ public class OutlayStringServiceImpl implements OutlayStringsService {
         if (row != null) {
             rows.add(row);
         } else {
-            throw new RuntimeException("Entity not found");
+            return null;
         }
 
         // eId.ifPresent(v -> {
@@ -163,7 +168,7 @@ public class OutlayStringServiceImpl implements OutlayStringsService {
         //            if (row != null) {
         //                rows.add(row);
         //            } else {
-        //                throw new RuntimeException("Entity not found");
+        //                return null;
         //            }
         //        });
         //        if (eId.isEmpty()) {
@@ -191,7 +196,7 @@ public class OutlayStringServiceImpl implements OutlayStringsService {
                 .setParameter("id", rowId)
                 .setParameter("eId", eId).getSingleResult();
         if (row == null) {
-            throw new RuntimeException("row not found.");
+            return null;
         }
 
         List<RowResponse> changed = new ArrayList<>();
@@ -225,7 +230,7 @@ public class OutlayStringServiceImpl implements OutlayStringsService {
         OutlayRow outlayRow = entityManager.find(OutlayRow.class, stringId);
 
         if (outlayRow == null || outlayRow.getIsDeleted()) {
-            throw new RuntimeException("String with id: " + stringId + " not found.");
+            return null;
         } else {
             return outlayRow;
         }
@@ -240,44 +245,42 @@ public class OutlayStringServiceImpl implements OutlayStringsService {
                 .setParameter("id", id)
                 .setParameter("eId", eid).getSingleResult();
         if (outlayRow == null) {
-            throw new RuntimeException("row not found.");
+            return null;
         }
         List<RowResponse> changed = new ArrayList<>();
-        if (outlayRow != null) {
-            List<OutlayRow> rows = entityManager.createQuery("select r from OutlayRow r where r.parent = :id", OutlayRow.class)
-                    .setParameter("id", outlayRow.getId()).getResultList();
-            rows.forEach(v -> {
-                        v.setIsDeleted(true);
-                        entityManager.merge(v);
-                        entityManager.flush();
-                        entityManager.refresh(v);
-                    }
-            );
-            outlayRow.setIsDeleted(true);
-            entityManager.merge(outlayRow);
-            entityManager.flush();
-            entityManager.refresh(outlayRow);
+        List<OutlayRow> rows = entityManager.createQuery("select r from OutlayRow r where r.parent = :id", OutlayRow.class)
+                .setParameter("id", outlayRow.getId()).getResultList();
+        rows.forEach(v -> {
+                    v.setIsDeleted(true);
+                    entityManager.merge(v);
+                    entityManager.flush();
+                    entityManager.refresh(v);
+                }
+        );
+        outlayRow.setIsDeleted(true);
+        entityManager.merge(outlayRow);
+        entityManager.flush();
+        entityManager.refresh(outlayRow);
 
-            if (outlayRow.getParent() != null) {
-                OutlayRow parent = entityManager.find(OutlayRow.class, outlayRow.getParent());
-                changed = updateParents(parent, outlayRow, true);
-                List<Long> rowDeleteList = List.of(outlayRow.getId());
-                do {
+        if (outlayRow.getParent() != null) {
+            OutlayRow parent = entityManager.find(OutlayRow.class, outlayRow.getParent());
+            changed = updateParents(parent, outlayRow, true);
+            List<Long> rowDeleteList = List.of(outlayRow.getId());
+            do {
 
-                    rowDeleteList = entityManager.createQuery("select r.id from OutlayRow r where r.parent in (:ids)", Long.class)
-                            .setParameter("ids", rowDeleteList).getResultList();
-                    if (rowDeleteList.size() > 0) {
-                        rowDeleteList = deleteChild(rowDeleteList);
-                    }
-                } while (rowDeleteList.size() > 0);
-                return RecalculatedRows.builder()
-                        .currentRov(null)
-                        .changed(changed)
-                        .build();
-            }
-
-
+                rowDeleteList = entityManager.createQuery("select r.id from OutlayRow r where r.parent in (:ids)", Long.class)
+                        .setParameter("ids", rowDeleteList).getResultList();
+                if (rowDeleteList.size() > 0) {
+                    rowDeleteList = deleteChild(rowDeleteList);
+                }
+            } while (rowDeleteList.size() > 0);
+            return RecalculatedRows.builder()
+                    .currentRov(null)
+                    .changed(changed)
+                    .build();
         }
+
+
         return RecalculatedRows.builder().build();
     }
 
