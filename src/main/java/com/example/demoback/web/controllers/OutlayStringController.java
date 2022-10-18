@@ -5,6 +5,7 @@ import com.example.demoback.model.OutlayRow;
 import com.example.demoback.services.OutlayStringsService;
 import com.example.demoback.web.mappers.WebMapper;
 import com.example.demoback.web.requests.OutlayRowRequest;
+import com.example.demoback.web.requests.OutlayRowUpdateRequest;
 import com.example.demoback.web.responses.EntityResponse;
 import com.example.demoback.web.responses.RecalculatedRows;
 import com.example.demoback.web.responses.TreeResponse;
@@ -44,53 +45,55 @@ public class OutlayStringController {
             RecalculatedRows outlayRow = outlayStringsService.createRowInEntity(eID, request);
             return ResponseEntity.ok(outlayRow);
         } catch (Exception e) {
+            e.printStackTrace();
             throw new ResourceNotFoundException();
         }
 
     }
-
 
     @Operation(description = "Метод получения списка строк из сущности, возвращает строки в древовидном представлении(2)")
     @GetMapping("/entity/{eID}/row/list")
     public ResponseEntity<List<TreeResponse>> getTreeRows(@PathVariable Long eID) {
-        List<OutlayRow> row = outlayStringsService.getTreeRows(eID);
-        if (row == null) {
+        try {
+            List<OutlayRow> row = outlayStringsService.getTreeRows(eID);
+            if (row == null) {
+                throw new ResourceNotFoundException();
+            }
+            List<TreeResponse> responses = new ArrayList<>();
+            row.forEach(v ->
+            {
+                if (v.getParent() == null)
+                    responses.add(webMapper.toTreeResponse(v));
+            });
+            return ResponseEntity.ok(responses);
+        } catch (Exception e) {
+            e.printStackTrace();
             throw new ResourceNotFoundException();
         }
-        List<TreeResponse> responses = new ArrayList<>();
-        row.forEach(v ->
-        {
-            if (v.getParent() == null)
-                responses.add(webMapper.toTreeResponse(v));
-        });
-        return ResponseEntity.ok(responses);
     }
 
     @Operation(description = "Метод редактирования строки в сущности(4)")
-    @PutMapping("/entity/{eID}/row/{rID}/update")
-    public ResponseEntity<RecalculatedRows> updateRow(@RequestBody OutlayRowRequest request, @PathVariable Long eID, @PathVariable Long rID) {
-        RecalculatedRows row = outlayStringsService.updateRow(eID, rID, request);
-        if (row == null) {
+    @PostMapping("/entity/{eID}/row/{rID}/update")
+    public ResponseEntity<RecalculatedRows> updateRow(@RequestBody OutlayRowUpdateRequest request, @PathVariable Long eID, @PathVariable Long rID) {
+        try {
+            RecalculatedRows row = outlayStringsService.updateRow(eID, rID, request);
+            return ResponseEntity.ok(row);
+        } catch (Exception e) {
+            e.printStackTrace();
             throw new ResourceNotFoundException();
         }
-        return ResponseEntity.ok(row);
     }
 
     @Operation(description = "Метод удаления строки в сущности(5)")
     @DeleteMapping("/entity/{eID}/row/{rID}/delete")
     public ResponseEntity<RecalculatedRows> deleteRow(@PathVariable(name = "eID") Long eID, @PathVariable(name = "rID") Long rID) {
 
-
-       // try {
-        //            RecalculatedRows row = outlayStringsService.deleteRow(eID, rID);
-        //            return ResponseEntity.ok(row);
-        //        } catch (Exception e) {
-        //            throw new ResourceNotFoundException();
-        //
-        //        }
-
-        RecalculatedRows row = outlayStringsService.deleteRow(eID, rID);
-        return ResponseEntity.ok(row);
+        try {
+            RecalculatedRows row = outlayStringsService.deleteRow(eID, rID);
+            return ResponseEntity.ok(row);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ResourceNotFoundException();
+        }
     }
-
 }

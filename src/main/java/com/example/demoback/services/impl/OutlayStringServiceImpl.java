@@ -6,6 +6,7 @@ import com.example.demoback.model.UsersEntity;
 import com.example.demoback.services.OutlayStringsService;
 import com.example.demoback.web.mappers.WebMapper;
 import com.example.demoback.web.requests.OutlayRowRequest;
+import com.example.demoback.web.requests.OutlayRowUpdateRequest;
 import com.example.demoback.web.responses.EntityResponse;
 import com.example.demoback.web.responses.RecalculatedRows;
 import com.example.demoback.web.responses.RowResponse;
@@ -204,11 +205,19 @@ public class OutlayStringServiceImpl implements OutlayStringsService {
 
     @Override
     @Transactional
-    public RecalculatedRows updateRow(Long eId, Long rowId, OutlayRowRequest request) {
+    public RecalculatedRows updateRow(Long eId, Long rowId, OutlayRowUpdateRequest request) {
 
-        OutlayRow row = entityManager.createQuery("select r from OutlayRow r where r.id = :id and r.isDeleted = false and r.parent = :eId", OutlayRow.class)
-                .setParameter("id", rowId)
-                .setParameter("eId", eId).getSingleResult();
+        EntityRows ent = entityManager.createQuery(
+                "select r from EntityRows r where r.entityId = :eId and r.rowId = :rId", EntityRows.class)
+                .setParameter("eId", eId)
+                .setParameter("rId", rowId).getSingleResult();
+
+        if (ent == null) {
+            return null;
+        }
+
+        OutlayRow row = entityManager.createQuery("select r from OutlayRow r where r.id = :id and r.isDeleted = false", OutlayRow.class)
+                .setParameter("id", ent.getRowId()).getSingleResult();
         if (row == null) {
             return null;
         }

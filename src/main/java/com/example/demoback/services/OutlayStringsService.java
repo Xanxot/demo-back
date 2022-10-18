@@ -2,6 +2,7 @@ package com.example.demoback.services;
 
 import com.example.demoback.model.OutlayRow;
 import com.example.demoback.web.requests.OutlayRowRequest;
+import com.example.demoback.web.requests.OutlayRowUpdateRequest;
 import com.example.demoback.web.responses.EntityResponse;
 import com.example.demoback.web.responses.RecalculatedRows;
 import com.example.demoback.web.responses.TreeResponse;
@@ -13,7 +14,7 @@ public interface OutlayStringsService {
     RecalculatedRows createRowInEntity(Long entityId, OutlayRowRequest request);
     List<OutlayRow> getTreeRows(Long entityId);
     List<TreeResponse> getChild(Long id);
-    RecalculatedRows updateRow(Long entityId, Long rowId, OutlayRowRequest request);
+    RecalculatedRows updateRow(Long entityId, Long rowId, OutlayRowUpdateRequest request);
     OutlayRow get (Long stringId);
     RecalculatedRows deleteRow(Long eId, Long rId);
 
