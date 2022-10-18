@@ -1,10 +1,12 @@
 package com.example.demoback.services.impl;
 
+import com.example.demoback.model.EntityRows;
 import com.example.demoback.model.OutlayRow;
+import com.example.demoback.model.UsersEntity;
 import com.example.demoback.services.OutlayStringsService;
 import com.example.demoback.web.mappers.WebMapper;
 import com.example.demoback.web.requests.OutlayRowRequest;
-import com.example.demoback.web.responses.NewRowResponse;
+import com.example.demoback.web.responses.EntityResponse;
 import com.example.demoback.web.responses.RecalculatedRows;
 import com.example.demoback.web.responses.RowResponse;
 import com.example.demoback.web.responses.TreeResponse;
@@ -32,36 +34,33 @@ public class OutlayStringServiceImpl implements OutlayStringsService {
 
     @Override
     @Transactional
-    public NewRowResponse newEntity() {
-        OutlayRow outlayRow = OutlayRow.builder()
-                .stringName(UUID.randomUUID().toString())
-                .isDeleted(false)
-                .salary(0L)
-                .mimExploitation(0L)
-                .machineOperatorSalary(0L)
-                .materials(0L)
-                .mainCosts(0L)
-                .supportCosts(0L)
-                .equipmentCosts(0L)
-                .overheads(0L)
-                .estimatedProfit(0L)
+    public EntityResponse newEntity() {
+
+        UsersEntity entity = UsersEntity.builder()
+                .name(UUID.randomUUID().toString())
                 .build();
-        entityManager.persist(outlayRow);
+        entityManager.persist(entity);
         entityManager.flush();
-        entityManager.refresh(outlayRow);
-        return NewRowResponse.builder()
-                .id(outlayRow.getId())
-                .stringName(outlayRow.getRowName())
+        entityManager.refresh(entity);
+        return EntityResponse.builder()
+                .id(entity.getId())
+                .stringName(entity.getName())
                 .build();
     }
 
     @Override
     @Transactional
     public RecalculatedRows createRowInEntity(Long entityId, OutlayRowRequest request) {
-        OutlayRow parent = entityManager.createQuery("select r from OutlayRow r where r.id = :id and r.isDeleted = false", OutlayRow.class)
+
+        UsersEntity entity = entityManager.createQuery("select r from UsersEntity r where r.id = :id", UsersEntity.class)
                 .setParameter("id", entityId).getSingleResult();
-        if (parent == null) {
+        if (entity == null) {
             return null;
+        }
+        OutlayRow parent = null;
+        if (request.getParentId() != null) {
+            parent = entityManager.createQuery("select r from OutlayRow r where r.id = :id and r.isDeleted = false", OutlayRow.class)
+                    .setParameter("id", request.getParentId()).getSingleResult();
         }
 
         OutlayRow outlayRow = OutlayRow.builder()
@@ -76,8 +75,12 @@ public class OutlayStringServiceImpl implements OutlayStringsService {
                 .overheads(request.getOverheads())
                 .estimatedProfit(request.getEstimatedProfit())
                 .isDeleted(false)
-                .parent(parent.getId())
                 .build();
+
+        if (parent != null) {
+            outlayRow.setParent(parent.getId());
+        }
+
 
         List<RowResponse> changed = new ArrayList<>(updateParents(parent, outlayRow, false));
 
@@ -85,6 +88,13 @@ public class OutlayStringServiceImpl implements OutlayStringsService {
         entityManager.flush();
         entityManager.refresh(outlayRow);
 
+        EntityRows er = EntityRows.builder()
+                .entityId(entity.getId())
+                .rowId(outlayRow.getId())
+                .build();
+        entityManager.persist(er);
+        entityManager.flush();
+        entityManager.refresh(er);
 
         return RecalculatedRows.builder()
                 .currentRov(mapper.toRowResponse(outlayRow))
@@ -95,7 +105,7 @@ public class OutlayStringServiceImpl implements OutlayStringsService {
 
     public List<RowResponse> updateParents(OutlayRow parent, OutlayRow outlayRow, boolean deleted) {
         List<RowResponse> changed = new ArrayList<>();
-        if (outlayRow != null) {
+        if (parent != null && outlayRow != null) {
             RowResponse before = mapper.toRowResponse(parent);
             RowResponse after = mapper.toRowResponse(recalculateRow(parent, outlayRow, deleted));
 
@@ -104,7 +114,7 @@ public class OutlayStringServiceImpl implements OutlayStringsService {
             }
             //  changed.add(mapper.toRowResponse(recalculateRow(parent, outlayRow, deleted)));
         }
-        if (parent.getParent() != null) {
+        if (parent != null && parent.getParent() != null) {
             OutlayRow row = parent;
             do {
 

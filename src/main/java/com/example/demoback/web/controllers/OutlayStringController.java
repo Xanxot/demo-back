@@ -5,7 +5,7 @@ import com.example.demoback.model.OutlayRow;
 import com.example.demoback.services.OutlayStringsService;
 import com.example.demoback.web.mappers.WebMapper;
 import com.example.demoback.web.requests.OutlayRowRequest;
-import com.example.demoback.web.responses.NewRowResponse;
+import com.example.demoback.web.responses.EntityResponse;
 import com.example.demoback.web.responses.RecalculatedRows;
 import com.example.demoback.web.responses.TreeResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -31,7 +31,7 @@ public class OutlayStringController {
 
     @Operation(description = "Создать сущность(1)")
     @PostMapping("/entity/create")
-    public ResponseEntity<NewRowResponse> createOutlayString() {
+    public ResponseEntity<EntityResponse> createOutlayString() {
         return ResponseEntity.ok(outlayStringsService.newEntity());
     }
 

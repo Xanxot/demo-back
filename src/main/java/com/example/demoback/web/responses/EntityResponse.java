@@ -1,10 +1,10 @@
 package com.example.demoback.web.responses;
 
-public class NewRowResponse {
+public class EntityResponse {
     private Long id;
     private String rowName;
 
-    NewRowResponse(Long id, String rowName) {
+    EntityResponse(Long id, String rowName) {
         this.id = id;
         this.rowName = rowName;
     }
@@ -46,8 +46,8 @@ public class NewRowResponse {
             return this;
         }
 
-        public NewRowResponse build() {
-            return new NewRowResponse(id, stringName);
+        public EntityResponse build() {
+            return new EntityResponse(id, stringName);
         }
 
         public String toString() {

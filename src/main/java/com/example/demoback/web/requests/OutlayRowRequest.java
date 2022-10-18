@@ -1,6 +1,7 @@
 package com.example.demoback.web.requests;
 
 public class OutlayRowRequest {
+    private Long parentId;
     private String rowName;
     private Long salary;
     private Long mimExploitation;
@@ -12,7 +13,29 @@ public class OutlayRowRequest {
     private Long overheads;
     private Long estimatedProfit;
 
+    public OutlayRowRequest(Long parentId, String rowName, Long salary, Long mimExploitation, Long machineOperatorSalary, Long materials, Long mainCosts, Long supportCosts, Long equipmentCosts, Long overheads, Long estimatedProfit) {
+        this.parentId = parentId;
+        this.rowName = rowName;
+        this.salary = salary;
+        this.mimExploitation = mimExploitation;
+        this.machineOperatorSalary = machineOperatorSalary;
+        this.materials = materials;
+        this.mainCosts = mainCosts;
+        this.supportCosts = supportCosts;
+        this.equipmentCosts = equipmentCosts;
+        this.overheads = overheads;
+        this.estimatedProfit = estimatedProfit;
+    }
+
     public OutlayRowRequest() {
+    }
+
+    public static OutlayRowRequestBuilder builder() {
+        return new OutlayRowRequestBuilder();
+    }
+
+    public Long getParentId() {
+        return this.parentId;
     }
 
     public String getRowName() {
@@ -55,6 +78,10 @@ public class OutlayRowRequest {
         return this.estimatedProfit;
     }
 
+    public void setParentId(Long parentId) {
+        this.parentId = parentId;
+    }
+
     public void setRowName(String rowName) {
         this.rowName = rowName;
     }
@@ -95,8 +122,165 @@ public class OutlayRowRequest {
         this.estimatedProfit = estimatedProfit;
     }
 
+    public boolean equals(final Object o) {
+        if (o == this) return true;
+        if (!(o instanceof OutlayRowRequest)) return false;
+        final OutlayRowRequest other = (OutlayRowRequest) o;
+        if (!other.canEqual((Object) this)) return false;
+        final Object this$parentId = this.getParentId();
+        final Object other$parentId = other.getParentId();
+        if (this$parentId == null ? other$parentId != null : !this$parentId.equals(other$parentId)) return false;
+        final Object this$rowName = this.getRowName();
+        final Object other$rowName = other.getRowName();
+        if (this$rowName == null ? other$rowName != null : !this$rowName.equals(other$rowName)) return false;
+        final Object this$salary = this.getSalary();
+        final Object other$salary = other.getSalary();
+        if (this$salary == null ? other$salary != null : !this$salary.equals(other$salary)) return false;
+        final Object this$mimExploitation = this.getMimExploitation();
+        final Object other$mimExploitation = other.getMimExploitation();
+        if (this$mimExploitation == null ? other$mimExploitation != null : !this$mimExploitation.equals(other$mimExploitation))
+            return false;
+        final Object this$machineOperatorSalary = this.getMachineOperatorSalary();
+        final Object other$machineOperatorSalary = other.getMachineOperatorSalary();
+        if (this$machineOperatorSalary == null ? other$machineOperatorSalary != null : !this$machineOperatorSalary.equals(other$machineOperatorSalary))
+            return false;
+        final Object this$materials = this.getMaterials();
+        final Object other$materials = other.getMaterials();
+        if (this$materials == null ? other$materials != null : !this$materials.equals(other$materials)) return false;
+        final Object this$mainCosts = this.getMainCosts();
+        final Object other$mainCosts = other.getMainCosts();
+        if (this$mainCosts == null ? other$mainCosts != null : !this$mainCosts.equals(other$mainCosts)) return false;
+        final Object this$supportCosts = this.getSupportCosts();
+        final Object other$supportCosts = other.getSupportCosts();
+        if (this$supportCosts == null ? other$supportCosts != null : !this$supportCosts.equals(other$supportCosts))
+            return false;
+        final Object this$equipmentCosts = this.getEquipmentCosts();
+        final Object other$equipmentCosts = other.getEquipmentCosts();
+        if (this$equipmentCosts == null ? other$equipmentCosts != null : !this$equipmentCosts.equals(other$equipmentCosts))
+            return false;
+        final Object this$overheads = this.getOverheads();
+        final Object other$overheads = other.getOverheads();
+        if (this$overheads == null ? other$overheads != null : !this$overheads.equals(other$overheads)) return false;
+        final Object this$estimatedProfit = this.getEstimatedProfit();
+        final Object other$estimatedProfit = other.getEstimatedProfit();
+        if (this$estimatedProfit == null ? other$estimatedProfit != null : !this$estimatedProfit.equals(other$estimatedProfit))
+            return false;
+        return true;
+    }
+
+    protected boolean canEqual(final Object other) {
+        return other instanceof OutlayRowRequest;
+    }
+
+    public int hashCode() {
+        final int PRIME = 59;
+        int result = 1;
+        final Object $parentId = this.getParentId();
+        result = result * PRIME + ($parentId == null ? 43 : $parentId.hashCode());
+        final Object $rowName = this.getRowName();
+        result = result * PRIME + ($rowName == null ? 43 : $rowName.hashCode());
+        final Object $salary = this.getSalary();
+        result = result * PRIME + ($salary == null ? 43 : $salary.hashCode());
+        final Object $mimExploitation = this.getMimExploitation();
+        result = result * PRIME + ($mimExploitation == null ? 43 : $mimExploitation.hashCode());
+        final Object $machineOperatorSalary = this.getMachineOperatorSalary();
+        result = result * PRIME + ($machineOperatorSalary == null ? 43 : $machineOperatorSalary.hashCode());
+        final Object $materials = this.getMaterials();
+        result = result * PRIME + ($materials == null ? 43 : $materials.hashCode());
+        final Object $mainCosts = this.getMainCosts();
+        result = result * PRIME + ($mainCosts == null ? 43 : $mainCosts.hashCode());
+        final Object $supportCosts = this.getSupportCosts();
+        result = result * PRIME + ($supportCosts == null ? 43 : $supportCosts.hashCode());
+        final Object $equipmentCosts = this.getEquipmentCosts();
+        result = result * PRIME + ($equipmentCosts == null ? 43 : $equipmentCosts.hashCode());
+        final Object $overheads = this.getOverheads();
+        result = result * PRIME + ($overheads == null ? 43 : $overheads.hashCode());
+        final Object $estimatedProfit = this.getEstimatedProfit();
+        result = result * PRIME + ($estimatedProfit == null ? 43 : $estimatedProfit.hashCode());
+        return result;
+    }
 
     public String toString() {
-        return "OutlayStringRequest(stringName=" + this.getRowName() + ", salary=" + this.getSalary() + ", mimExploitation=" + this.getMimExploitation() + ", machineOperatorSalary=" + this.getMachineOperatorSalary() + ", materials=" + this.getMaterials() + ", mainCosts=" + this.getMainCosts() + ", supportCosts=" + this.getSupportCosts() + ", equipmentCosts=" + this.getEquipmentCosts() + ", overheads=" + this.getOverheads() + ", estimatedProfit=" + this.getEstimatedProfit() + ", isDeleted=" + ")";
+        return "OutlayRowRequest(parentId=" + this.getParentId() + ", rowName=" + this.getRowName() + ", salary=" + this.getSalary() + ", mimExploitation=" + this.getMimExploitation() + ", machineOperatorSalary=" + this.getMachineOperatorSalary() + ", materials=" + this.getMaterials() + ", mainCosts=" + this.getMainCosts() + ", supportCosts=" + this.getSupportCosts() + ", equipmentCosts=" + this.getEquipmentCosts() + ", overheads=" + this.getOverheads() + ", estimatedProfit=" + this.getEstimatedProfit() + ")";
+    }
+
+    public static class OutlayRowRequestBuilder {
+        private Long parentId;
+        private String rowName;
+        private Long salary;
+        private Long mimExploitation;
+        private Long machineOperatorSalary;
+        private Long materials;
+        private Long mainCosts;
+        private Long supportCosts;
+        private Long equipmentCosts;
+        private Long overheads;
+        private Long estimatedProfit;
+
+        OutlayRowRequestBuilder() {
+        }
+
+        public OutlayRowRequestBuilder parentId(Long parentId) {
+            this.parentId = parentId;
+            return this;
+        }
+
+        public OutlayRowRequestBuilder rowName(String rowName) {
+            this.rowName = rowName;
+            return this;
+        }
+
+        public OutlayRowRequestBuilder salary(Long salary) {
+            this.salary = salary;
+            return this;
+        }
+
+        public OutlayRowRequestBuilder mimExploitation(Long mimExploitation) {
+            this.mimExploitation = mimExploitation;
+            return this;
+        }
+
+        public OutlayRowRequestBuilder machineOperatorSalary(Long machineOperatorSalary) {
+            this.machineOperatorSalary = machineOperatorSalary;
+            return this;
+        }
+
+        public OutlayRowRequestBuilder materials(Long materials) {
+            this.materials = materials;
+            return this;
+        }
+
+        public OutlayRowRequestBuilder mainCosts(Long mainCosts) {
+            this.mainCosts = mainCosts;
+            return this;
+        }
+
+        public OutlayRowRequestBuilder supportCosts(Long supportCosts) {
+            this.supportCosts = supportCosts;
+            return this;
+        }
+
+        public OutlayRowRequestBuilder equipmentCosts(Long equipmentCosts) {
+            this.equipmentCosts = equipmentCosts;
+            return this;
+        }
+
+        public OutlayRowRequestBuilder overheads(Long overheads) {
+            this.overheads = overheads;
+            return this;
+        }
+
+        public OutlayRowRequestBuilder estimatedProfit(Long estimatedProfit) {
+            this.estimatedProfit = estimatedProfit;
+            return this;
+        }
+
+        public OutlayRowRequest build() {
+            return new OutlayRowRequest(parentId, rowName, salary, mimExploitation, machineOperatorSalary, materials, mainCosts, supportCosts, equipmentCosts, overheads, estimatedProfit);
+        }
+
+        public String toString() {
+            return "OutlayRowRequest.OutlayRowRequestBuilder(parentId=" + this.parentId + ", rowName=" + this.rowName + ", salary=" + this.salary + ", mimExploitation=" + this.mimExploitation + ", machineOperatorSalary=" + this.machineOperatorSalary + ", materials=" + this.materials + ", mainCosts=" + this.mainCosts + ", supportCosts=" + this.supportCosts + ", equipmentCosts=" + this.equipmentCosts + ", overheads=" + this.overheads + ", estimatedProfit=" + this.estimatedProfit + ")";
+        }
     }
 }
