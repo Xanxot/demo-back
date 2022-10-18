@@ -43,6 +43,9 @@ public class OutlayStringController {
 
         try {
             RecalculatedRows outlayRow = outlayStringsService.createRowInEntity(eID, request);
+            if (outlayRow == null){
+                throw new ResourceNotFoundException();
+            }
             return ResponseEntity.ok(outlayRow);
         } catch (Exception e) {
             e.printStackTrace();

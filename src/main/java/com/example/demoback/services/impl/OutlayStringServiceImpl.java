@@ -58,11 +58,10 @@ public class OutlayStringServiceImpl implements OutlayStringsService {
             return null;
         }
         OutlayRow parent = null;
-        if (request.getParentId() != null && request.getParentId() != 0L) {
+        if (request.getParentId() != null) {
             parent = entityManager.createQuery("select r from OutlayRow r where r.id = :id and r.isDeleted = false", OutlayRow.class)
                     .setParameter("id", request.getParentId()).getSingleResult();
         }
-
         OutlayRow outlayRow = OutlayRow.builder()
                 .stringName(request.getRowName())
                 .salary(request.getSalary())
@@ -174,9 +173,15 @@ public class OutlayStringServiceImpl implements OutlayStringsService {
     @Transactional
     public List<OutlayRow> getTreeRows(Long eId) {
 
+        UsersEntity uent = entityManager.find(UsersEntity.class, eId);
+
         List<EntityRows> ents = entityManager.createQuery(
                 "select r from EntityRows r where r.entityId = :id", EntityRows.class)
                 .setParameter("id", eId).getResultList();
+
+        if ((ents == null || ents.isEmpty()) && uent != null) {
+            return Collections.emptyList();
+        }
 
         if (ents == null || ents.isEmpty()) {
             return null;
